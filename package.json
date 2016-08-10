@@ -1,0 +1,60 @@
+{
+  "private": true,
+  "config": {
+    "serve_path": "/path/to/serve-directory/"
+  },
+  "browserify": {
+    "transform": [
+      "babelify"
+    ]
+  },
+  "scripts": {
+    "clean": "rm -rf dist/ && mkdir -p dist${npm_package_config_serve_path}{.,sp}/img/",
+    "start": "npm-run-all clean -p copy watch serve",
+    "serve": "browser-sync start -c bs.config.js",
+    "build:html:pc": "pug src/pc/html/[!_]* -o dist${npm_package_config_serve_path}",
+    "build:html:sp": "pug src/sp/html/[!_]* -o dist${npm_package_config_serve_path}sp/",
+    "build:css:pc": "node-sass src/pc/css/style.scss | postcss -c postcss.config.js -o dist${npm_package_config_serve_path}style.css",
+    "build:css:sp": "node-sass src/sp/css/style.scss | postcss -c postcss.config.js -o dist${npm_package_config_serve_path}sp/style.css",
+    "build:js:pc": "browserify src/pc/js/main.js | uglifyjs -c -m > dist${npm_package_config_serve_path}bundle.js",
+    "build:js:sp": "browserify src/sp/js/main.js | uglifyjs -c -m > dist${npm_package_config_serve_path}sp/bundle.js",
+    "build:img:pc": "imagemin src/pc/img/* -o dist${npm_package_config_serve_path}img/",
+    "build:img:sp": "imagemin src/sp/img/* -o dist${npm_package_config_serve_path}sp/img/",
+    "build": "npm-run-all clean -p build:*:* copy",
+    "watch:html:pc": "pug src/pc/html/[!_]* -o dist${npm_package_config_serve_path} -w",
+    "watch:html:sp": "pug src/sp/html/[!_]* -o dist${npm_package_config_serve_path}sp/ -w",
+    "watch:css:pc": "node-sass src/pc/css/style.scss dist${npm_package_config_serve_path}style.css -w --source-map true",
+    "watch:css:sp": "node-sass src/sp/css/style.scss dist${npm_package_config_serve_path}sp/style.css -w --source-map true",
+    "watch:js:pc": "watchify src/pc/js/main.js -o dist${npm_package_config_serve_path}bundle.js -d -v",
+    "watch:js:sp": "watchify src/pc/js/main.js -o dist${npm_package_config_serve_path}sp/bundle.js -d -v",
+    "watch:img:pc": "chokidar 'src/pc/img/**' --initial -c 'cp -r src/pc/img/ dist${npm_package_config_serve_path}img/'",
+    "watch:img:sp": "chokidar 'src/sp/img/**' --initial -c 'cp -r src/sp/img/ dist${npm_package_config_serve_path}sp/img/'",
+    "watch": "npm-run-all -p watch:*:*",
+    "copy:root": "cp -r assets/ dist/",
+    "copy:pc": "cp -r src/pc/assets/ dist${npm_package_config_serve_path}",
+    "copy:sp": "cp -r src/sp/assets/ dist${npm_package_config_serve_path}sp/",
+    "copy": "npm-run-all -p copy:*"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.13.0",
+    "jquery": "^3.1.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^6.4.0",
+    "babel-preset-es2015": "^6.13.2",
+    "babelify": "^7.3.0",
+    "browser-sync": "^2.14.0",
+    "browserify": "^13.1.0",
+    "browsersync-ssi": "^0.2.4",
+    "chokidar": "^1.6.0",
+    "imagemin-cli": "^3.0.0",
+    "node-sass": "^3.8.0",
+    "npm-run-all": "^2.3.0",
+    "postcss-cli": "^2.5.2",
+    "postcss-csso": "^1.1.2",
+    "pug-cli": "^1.0.0-alpha6",
+    "uglify-js": "^2.7.0",
+    "watchify": "^3.7.0"
+  },
+  "engines": ">=6.0.0"
+}
