@@ -36,7 +36,7 @@
     "copy": "npm-run-all -p copy:*"
   },
   "dependencies": {
-    "babel-polyfill": "^6.13.0",
+    "core-js": "^2.4.1",
     "jquery": "^3.1.0"
   },
   "devDependencies": {

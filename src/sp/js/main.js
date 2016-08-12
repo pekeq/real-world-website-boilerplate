@@ -1,3 +1,3 @@
 'use strict';
-require('babel-polyfill');
+require('core-js');
 const $ = require('jquery');
