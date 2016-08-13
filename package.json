@@ -24,7 +24,7 @@
     "watch:css_pc": "chokidar 'src/pc/css/**' --initial -c 'node-sass src/pc/css/style.scss dist${npm_package_config_serve_dir}style.css --source-map true --source-map-contents'",
     "watch:css_sp": "chokidar 'src/sp/css/**' --initial -c 'node-sass src/sp/css/style.scss dist${npm_package_config_serve_dir}sp/style.css --source-map true --source-map-contents'",
     "watch:js_pc": "watchify src/pc/js/main.js -o dist${npm_package_config_serve_dir}bundle.js -d -v",
-    "watch:js_sp": "watchify src/pc/js/main.js -o dist${npm_package_config_serve_dir}sp/bundle.js -d -v",
+    "watch:js_sp": "watchify src/sp/js/main.js -o dist${npm_package_config_serve_dir}sp/bundle.js -d -v",
     "watch:img_pc": "chokidar 'src/pc/img/**' --initial -c 'cp -r src/pc/img/ dist${npm_package_config_serve_dir}img/'",
     "watch:img_sp": "chokidar 'src/sp/img/**' --initial -c 'cp -r src/sp/img/ dist${npm_package_config_serve_dir}sp/img/'",
     "watch": "npm-run-all -p watch:*",
