@@ -17,27 +17,29 @@ const uniq = array => Array.from(new Set(array));
   src: 'sp',
   dest: 'sp'
 }].forEach(env => {
-  const srcDir = path.join('src', env.src, 'html');
-  const destDir = path.join('dist', serveDir, env.dest);
+  const envSrcDir = path.join('src', env.src, 'html');
+  const envDestDir = path.join('dist', serveDir, env.dest);
   const render = () => {
-    const files = glob.sync(`${srcDir}/**/*.pug`);
-    const directories = uniq(
-      files.map(file => path.dirname(file).replace(srcDir, destDir))
+    const srcFiles = glob.sync(`${envSrcDir}/**/*.pug`);
+    const destDirs = uniq(
+      srcFiles.map(file => path.dirname(file).replace(envSrcDir, envDestDir))
     );
-    directories.forEach(dir => mkdirp.sync(dir));
-    files.forEach(file => {
-      const filename = file.replace(srcDir, destDir).replace(/\.pug$/, '.html');
-      const html = pug.renderFile(file, {
+    destDirs.forEach(dir => mkdirp.sync(dir));
+    srcFiles.forEach(srcFile => {
+      const destFileName = srcFile
+      .replace(envSrcDir, envDestDir)
+      .replace(/\.pug$/, '.html');
+      const html = pug.renderFile(srcFile, {
         pretty: argv.pretty
       });
-      fs.writeFileSync(filename, html);
+      fs.writeFileSync(destFileName, html);
     });
   };
 
   if (!argv.watch) {
     render();
   } else {
-    chokidar.watch(srcDir)
+    chokidar.watch(envSrcDir)
     .on('add', render)
     .on('change', render);
   }
