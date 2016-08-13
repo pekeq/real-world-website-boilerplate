@@ -6,7 +6,7 @@ const mkdirp = require('mkdirp');
 const pug = require('pug');
 const chokidar = require('chokidar');
 
-const servePath = process.env.npm_package_config_serve_path;
+const serveDir = process.env.npm_package_config_serve_dir;
 const argv = require('minimist')(process.argv.slice(2));
 const uniq = array => Array.from(new Set(array));
 
@@ -18,7 +18,7 @@ const uniq = array => Array.from(new Set(array));
   dest: 'sp'
 }].forEach(env => {
   const srcDir = path.join('src', env.src, 'html');
-  const destDir = path.join('dist', servePath, env.dest);
+  const destDir = path.join('dist', serveDir, env.dest);
   const render = () => {
     const files = glob.sync(`${srcDir}/**/*.pug`);
     const directories = uniq(

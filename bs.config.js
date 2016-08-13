@@ -7,7 +7,7 @@ module.exports = {
       ext: '.html'
     })
   },
-  startPath: process.env.npm_package_config_serve_path,
+  startPath: process.env.npm_package_config_serve_dir,
   ghostMode: false,
   logFileChanges: false,
   open: false,
