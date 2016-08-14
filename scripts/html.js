@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const glob = require('glob');
 const mkdirp = require('mkdirp');
+const debounce = require('lodash.debounce');
 const pug = require('pug');
 const chokidar = require('chokidar');
 
@@ -19,7 +20,7 @@ const uniq = array => Array.from(new Set(array));
 }].forEach(env => {
   const envSrcDir = path.join('src', env.src, 'html');
   const envDestDir = path.join('dist', serveDir, env.dest);
-  const render = () => {
+  const render = debounce(() => {
     const srcFiles = glob.sync(`${envSrcDir}/**/*.pug`);
     const destDirs = uniq(
       srcFiles.map(file => path.dirname(file).replace(envSrcDir, envDestDir))
@@ -34,7 +35,7 @@ const uniq = array => Array.from(new Set(array));
       });
       fs.writeFileSync(destFileName, html);
     });
-  };
+  }, 300);
 
   if (!argv.watch) {
     render();
