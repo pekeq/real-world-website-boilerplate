@@ -54,6 +54,7 @@
     "npm-run-all": "^2.3.0",
     "postcss-cli": "^2.5.2",
     "postcss-csso": "^1.1.2",
+    "postcss-flexbugs-fixes": "^2.0.0",
     "pug-cli": "^1.0.0-alpha6",
     "uglify-js": "^2.7.0",
     "watchify": "^3.7.0"
