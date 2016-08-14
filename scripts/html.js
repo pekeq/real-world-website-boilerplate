@@ -30,7 +30,7 @@ const uniq = array => Array.from(new Set(array));
       .replace(envSrcDir, envDestDir)
       .replace(/\.pug$/, '.html');
       const html = pug.renderFile(srcFile, {
-        pretty: argv.pretty
+        pretty: true
       });
       fs.writeFileSync(destFileName, html);
     });
