@@ -1,10 +1,7 @@
-- var title = '';
-- var description = '';
-- var siteName = '';
-- var origin = '';
-- var root = '';
-- var path = '';
-- var ogImage = '';
+- var title = 'title';
+- var description = 'description';
+- var siteName = 'site name';
+- var ogImage = 'img/cover.png';
 
 doctype html
 html(lang="ja")
@@ -16,16 +13,16 @@ html(lang="ja")
     meta(name="format-detection", content="telephone=no")
     meta(property="og:title", content= title)
     meta(property="og:type", content="website")
-    meta(property="og:image", content= origin + root + ogImage)
-    meta(property="og:url", content= origin + root)
+    meta(property="og:image", content= origin + root.pc + ogImage)
+    meta(property="og:url", content= origin + root.pc)
     meta(property="og:description", content= description)
     meta(property="og:locale", content="ja_JP")
     meta(property="og:site_name", content= siteName)
     meta(property="twitter:card", content="summary_large_image")
-    link(rel="cannonical", href= `${root}${path.substr(1)}`)
-    link(rel="stylesheet", href= `${root}sp/style.css`)
+    link(rel="cannonical", href= `${root.pc}${path}`)
+    link(rel="stylesheet", href= `${root.sp}style.css`)
 
   body
     h1= title
 
-    script(src= `${root}sp/bundle.js`)
+    script(src= `${root.sp}bundle.js`)

@@ -1,0 +1,14 @@
+script
+  | (function (l) {
+  |   'use strict';
+  |   var userAgent = navigator.userAgent;
+  | 
+  = ` var root = '${root.pc}';`
+  |   var isMobile = ['iPhone', 'iPad', 'Android', 'Mobile']
+  |   .some(function (name) {
+  |     return userAgent.indexOf(name) > -1;
+  |   });
+  |   if (isMobile) {
+  |     l.replace(l.pathname.replace(root, root + 'sp/'));
+  |   }
+  | })(location);
