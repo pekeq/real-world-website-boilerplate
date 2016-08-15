@@ -1,3 +1,4 @@
-/node_modules/
+/node_modules/*
+!/node_modules/shared-js
 /npm-debug.log
 /dist/
