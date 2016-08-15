@@ -1,10 +1,11 @@
 'use strict';
 const Velocity = require('velocity-animate');
+
 const baseEasings = {};
 
 baseEasings.Elastic = p => p === 0 || p === 1
   ? p
-  : -Math.pow(2, 8 * (p - 1)) *
+  : - Math.pow(2, 8 * (p - 1)) *
       Math.sin (((p - 1) * 80 - 7.5) * Math.PI / 15);
 
 baseEasings.Back = p => p * p * (3 * p - 2);
