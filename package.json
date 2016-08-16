@@ -9,7 +9,7 @@
     ]
   },
   "scripts": {
-    "clean": "rm -rf dist/ && mkdir -p dist/${npm_package_config_serve_dir}/{.,sp}/img/",
+    "clean": "rm -rf dist/ && mkdir -p dist/${npm_package_config_serve_dir}/img/ dist/${npm_package_config_serve_dir}/sp/img/",
     "start": "npm-run-all clean -p copy watch serve",
     "serve": "browser-sync start -c bs.config.js",
     "build:html": "node scripts/html.js",
@@ -25,12 +25,12 @@
     "watch:css_sp": "chokidar 'src/sp/css/**' --initial -c 'node-sass src/sp/css/style.scss dist/${npm_package_config_serve_dir}/sp/style.css --source-map true --source-map-contents'",
     "watch:js_pc": "watchify src/pc/js/main.js -o dist/${npm_package_config_serve_dir}/bundle.js -d -v",
     "watch:js_sp": "watchify src/sp/js/main.js -o dist/${npm_package_config_serve_dir}/sp/bundle.js -d -v",
-    "watch:img_pc": "chokidar 'src/pc/img/**' --initial -c 'cp -r src/pc/img/ dist/${npm_package_config_serve_dir}/img/'",
-    "watch:img_sp": "chokidar 'src/sp/img/**' --initial -c 'cp -r src/sp/img/ dist/${npm_package_config_serve_dir}/sp/img/'",
+    "watch:img_pc": "chokidar 'src/pc/img/**' --initial -c 'cp -r src/pc/img/. dist/${npm_package_config_serve_dir}/img/'",
+    "watch:img_sp": "chokidar 'src/sp/img/**' --initial -c 'cp -r src/sp/img/. dist/${npm_package_config_serve_dir}/sp/img/'",
     "watch": "npm-run-all -p watch:*",
-    "copy:root": "cp -r assets/ dist/",
-    "copy:pc": "cp -r src/pc/assets/ dist/${npm_package_config_serve_dir}/",
-    "copy:sp": "cp -r src/sp/assets/ dist/${npm_package_config_serve_dir}/sp/",
+    "copy:root": "cp -r assets/. dist/",
+    "copy:pc": "cp -r src/pc/assets/. dist/${npm_package_config_serve_dir}/",
+    "copy:sp": "cp -r src/sp/assets/. dist/${npm_package_config_serve_dir}/sp/",
     "copy": "npm-run-all -p copy:*"
   },
   "dependencies": {
