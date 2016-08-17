@@ -49,7 +49,7 @@ values(envs).forEach(env => {
           pc: `/${path.join(serveDir, envs.pc.dest)}/`,
           sp: `/${path.join(serveDir, envs.sp.dest)}/`
         },
-        path: pagePath
+        currentPath: pagePath
       });
       const html = pug.renderFile(srcFile, options);
       fs.writeFileSync(destFileName, html);
