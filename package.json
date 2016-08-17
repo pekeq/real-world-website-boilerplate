@@ -10,7 +10,7 @@
   },
   "scripts": {
     "clean": "rm -rf dist/ && mkdir -p dist/${npm_package_config_serve_dir}/img/ dist/${npm_package_config_serve_dir}/sp/img/",
-    "start": "npm-run-all clean -p copy watch serve",
+    "start": "npm-run-all clean -p watch serve",
     "serve": "browser-sync start -c bs.config.js",
     "build:html": "node scripts/html.js",
     "build:css_pc": "node-sass src/pc/css/style.scss | postcss -c postcss.config.js -o dist/${npm_package_config_serve_dir}/style.css",
@@ -19,7 +19,10 @@
     "build:js_sp": "browserify src/sp/js/main.js | uglifyjs -c -m > dist/${npm_package_config_serve_dir}/sp/bundle.js",
     "build:img_pc": "imagemin src/pc/img/* -o dist/${npm_package_config_serve_dir}/img/",
     "build:img_sp": "imagemin src/sp/img/* -o dist/${npm_package_config_serve_dir}/sp/img/",
-    "build": "npm-run-all clean -p build:* copy",
+    "build:copy_root": "cp -r assets/. dist/",
+    "build:copy_pc": "cp -r src/pc/assets/. dist/${npm_package_config_serve_dir}/",
+    "build:copy_sp": "cp -r src/sp/assets/. dist/${npm_package_config_serve_dir}/sp/",
+    "build": "npm-run-all clean -p build:*",
     "watch:html": "node scripts/html.js --watch",
     "watch:css_pc": "chokidar 'src/pc/css/**' --initial -c 'node-sass src/pc/css/style.scss dist/${npm_package_config_serve_dir}/style.css --source-map true --source-map-contents'",
     "watch:css_sp": "chokidar 'src/sp/css/**' --initial -c 'node-sass src/sp/css/style.scss dist/${npm_package_config_serve_dir}/sp/style.css --source-map true --source-map-contents'",
@@ -27,11 +30,10 @@
     "watch:js_sp": "watchify src/sp/js/main.js -o dist/${npm_package_config_serve_dir}/sp/bundle.js -d -v",
     "watch:img_pc": "chokidar 'src/pc/img/**' --initial -c 'cp -r src/pc/img/. dist/${npm_package_config_serve_dir}/img/'",
     "watch:img_sp": "chokidar 'src/sp/img/**' --initial -c 'cp -r src/sp/img/. dist/${npm_package_config_serve_dir}/sp/img/'",
-    "watch": "npm-run-all -p watch:*",
-    "copy:root": "cp -r assets/. dist/",
-    "copy:pc": "cp -r src/pc/assets/. dist/${npm_package_config_serve_dir}/",
-    "copy:sp": "cp -r src/sp/assets/. dist/${npm_package_config_serve_dir}/sp/",
-    "copy": "npm-run-all -p copy:*"
+    "watch:copy_root": "chokidar 'assets/**' --initial -c 'cp -r assets/. dist/'",
+    "watch:copy_pc": "chokidar 'src/pc/assets/**' --initial -c 'cp -r src/pc/assets/. dist/${npm_package_config_serve_dir}/'",
+    "watch:copy_sp": "chokidar 'src/sp/assets/**' --initial -c 'cp -r src/sp/assets/. dist/${npm_package_config_serve_dir}/sp/'",
+    "watch": "npm-run-all -p watch:*"
   },
   "dependencies": {
     "core-js": "^2.4.1",
