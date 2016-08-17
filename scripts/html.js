@@ -54,6 +54,7 @@ values(envs).forEach(env => {
       const html = pug.renderFile(srcFile, options);
       fs.writeFileSync(destFileName, html);
     });
+    console.log('rendered html');
   }, 300);
 
   if (!argv.watch) {
