@@ -57,7 +57,7 @@
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
     "node-sass": "^3.8.0",
-    "npm-run-all": "^2.3.0",
+    "npm-run-all": "^3.0.0",
     "postcss-cli": "^2.5.2",
     "postcss-csso": "^1.1.2",
     "postcss-flexbugs-fixes": "^2.0.0",
