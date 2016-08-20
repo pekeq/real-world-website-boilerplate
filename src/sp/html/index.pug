@@ -23,6 +23,8 @@ html(lang="ja")
     link(rel="stylesheet", href= `${root.sp}style.css`)
 
   body
-    h1= title
+    include partial/home/content
 
     script(src= `${root.sp}bundle.js`)
+    script.
+      window.ProjectNameSpace.run('home');

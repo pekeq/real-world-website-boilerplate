@@ -38,6 +38,7 @@
     "watch": "npm-run-all -p watch:*"
   },
   "dependencies": {
+    "@yuheiy/page-dispatcher": "0.0.2",
     "core-js": "^2.4.1",
     "scrollmagic": "^2.0.5",
     "velocity-animate": "^1.2.3"

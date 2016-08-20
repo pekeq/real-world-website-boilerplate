@@ -22,6 +22,8 @@ html(lang="ja")
     link(rel="stylesheet", href= `${root.pc}style.css`)
 
   body
-    h1= title
+    include partial/home/content
 
     script(src= `${root.pc}bundle.js`)
+    script.
+      window.ProjectNameSpace.run('home');
