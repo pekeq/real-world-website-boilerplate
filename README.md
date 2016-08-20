@@ -122,7 +122,7 @@ Inspired by [ECSS](http://ecss.io/).
 │   │   └── js/                     # Scripts can be used from require('shared-js')
 │   │       ├── utils.js            # Utilify functions
 │   │       └── velocity-easings.js # Expand easings of velocity
-│   └── metadata.json               # Variables can be used by all of HTML templates
+│   └── website.json                # Variables can be used by all of HTML templates
 ├── assets/                         # Copy to dist/
 ├── scripts/                        # Used by npm-scripts
 │   ├── html.js                     # Render HTML templates
