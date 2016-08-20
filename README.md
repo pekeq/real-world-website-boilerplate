@@ -1,6 +1,6 @@
 # Real World Website Boilerplate
 
-Fight against the dirty real world
+Fight against the dirty real worlds.
 
 ## Install
 
