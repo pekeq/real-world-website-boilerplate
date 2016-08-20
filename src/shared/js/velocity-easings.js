@@ -1,4 +1,18 @@
 'use strict';
+/*
+Expand easings of velocity.
+Those easings can be used.
+
+- easeInElastic
+- easeOutElastic
+- easeInOutElastic
+- easeInBack
+- easeOutBack
+- easeInOutBack
+- easeInBounce
+- easeOutBounce
+- easeInOutBounce
+*/
 const Velocity = require('velocity-animate');
 
 const baseEasings = {};
