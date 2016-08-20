@@ -31,6 +31,10 @@ $ npm run build
 - Browserify
 - Babel
   - es2015
+- [page-dispatcher](https://github.com/yuheiy/page-dispatcher)
+- core-js
+- Velocity
+- ScrollMagic
 - Imagemin
 - BrowserSync
 
@@ -48,7 +52,7 @@ Edit project served directory in `package.json`.
 
 ### Global name space for JavaScript
 
-Edit global name space in `{pc,sp}/js/main.js`.
+Edit global name space in `src/{pc,sp}/js/main.js`.
 
 ```javascript
 window.ProjectNameSpace = {
