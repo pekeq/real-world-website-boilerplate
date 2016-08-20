@@ -36,12 +36,32 @@ $ npm run build
 
 ## Configuration
 
+### Served directory
+
 Edit project served directory in `package.json`.
 
 ```json
 "config": {
   "serve_dir": "path/to/serve-directory"
 },
+```
+
+### Global name space for JavaScript
+
+Edit global name space in `{pc,sp}/js/main.js`.
+
+```javascript
+window.ProjectNameSpace = {
+  // do stuff...
+}
+```
+
+Edit HTML templates.
+
+```jade
+script(src= `${root.pc}bundle.js`)
+script.
+  window.ProjectNameSpace.run('home');
 ```
 
 ## CSS design
