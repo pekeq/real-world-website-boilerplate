@@ -1,4 +1,3 @@
-'use strict';
 /*
 Expand easings of velocity.
 Those easings can be used.
@@ -13,6 +12,7 @@ Those easings can be used.
 - easeOutBounce
 - easeInOutBounce
 */
+'use strict';
 const Velocity = require('velocity-animate');
 
 const baseEasings = {};
