@@ -142,7 +142,7 @@ Inspired by [ECSS](http://ecss.io/).
 │                   ├── index.html
 │                   ├── style.css
 │                   └── bundle.js
-├── bs.config.js                    # Config for development server
+├── bs.config.js                    # Config for BrowserSync
 ├── package.json                    # Config for the project
 └── postcss.config.js               # Config for PostCSS
 ```
