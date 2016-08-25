@@ -30,7 +30,7 @@ $ npm run build
   - flexbugs-fixes
 - Browserify
 - Babel
-  - es2015
+  - latest
 - [page-dispatcher](https://github.com/yuheiy/page-dispatcher)
 - core-js
 - Velocity
