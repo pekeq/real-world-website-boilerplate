@@ -10,7 +10,7 @@ const debounce = require('lodash.debounce');
 const {_: [srcDir, destDir], watch} = require('minimist')(process.argv.slice(2));
 
 const siteDataPath = 'src/website.json';
-const serveDir = process.env.npm_package_config_serve_dir;
+const serveDir = process.env.npm_package_config_serveDir;
 const root = {
   pc: `/${serveDir}/`,
   sp: `/${serveDir}/sp/`

@@ -1,7 +1,7 @@
 {
   "private": true,
   "config": {
-    "serve_dir": "path/to/serve-directory"
+    "serveDir": "path/to/serve-directory"
   },
   "browserify": {
     "transform": [
@@ -9,32 +9,32 @@
     ]
   },
   "scripts": {
-    "clean": "rm -rf dist/ && mkdir -p dist/${npm_package_config_serve_dir}/img/ dist/${npm_package_config_serve_dir}/sp/img/",
+    "clean": "rm -rf dist/ && mkdir -p dist/${npm_package_config_serveDir}/img/ dist/${npm_package_config_serveDir}/sp/img/",
     "start": "npm-run-all clean -p watch serve",
     "serve": "browser-sync start -c bs.config.js",
-    "build:html_pc": "node scripts/html.js src/pc/html/ dist/${npm_package_config_serve_dir}/",
-    "build:html_sp": "node scripts/html.js src/sp/html/ dist/${npm_package_config_serve_dir}/sp/",
-    "build:css_pc": "node-sass src/pc/css/style.scss | postcss -c postcss.config.js -o dist/${npm_package_config_serve_dir}/style.css",
-    "build:css_sp": "node-sass src/sp/css/style.scss | postcss -c postcss.config.js -o dist/${npm_package_config_serve_dir}/sp/style.css",
-    "build:js_pc": "browserify src/pc/js/main.js | uglifyjs -c -m > dist/${npm_package_config_serve_dir}/bundle.js",
-    "build:js_sp": "browserify src/sp/js/main.js | uglifyjs -c -m > dist/${npm_package_config_serve_dir}/sp/bundle.js",
-    "build:img_pc": "node scripts/imagemin.js src/pc/img/ dist/${npm_package_config_serve_dir}/img/",
-    "build:img_sp": "node scripts/imagemin.js src/sp/img/ dist/${npm_package_config_serve_dir}/sp/img/",
+    "build:html_pc": "node scripts/html.js src/pc/html/ dist/${npm_package_config_serveDir}/",
+    "build:html_sp": "node scripts/html.js src/sp/html/ dist/${npm_package_config_serveDir}/sp/",
+    "build:css_pc": "node-sass src/pc/css/style.scss | postcss -c postcss.config.js -o dist/${npm_package_config_serveDir}/style.css",
+    "build:css_sp": "node-sass src/sp/css/style.scss | postcss -c postcss.config.js -o dist/${npm_package_config_serveDir}/sp/style.css",
+    "build:js_pc": "browserify src/pc/js/main.js | uglifyjs -c -m > dist/${npm_package_config_serveDir}/bundle.js",
+    "build:js_sp": "browserify src/sp/js/main.js | uglifyjs -c -m > dist/${npm_package_config_serveDir}/sp/bundle.js",
+    "build:img_pc": "node scripts/imagemin.js src/pc/img/ dist/${npm_package_config_serveDir}/img/",
+    "build:img_sp": "node scripts/imagemin.js src/sp/img/ dist/${npm_package_config_serveDir}/sp/img/",
     "build:copy_root": "cp -r assets/. dist/",
-    "build:copy_pc": "cp -r src/pc/assets/. dist/${npm_package_config_serve_dir}/",
-    "build:copy_sp": "cp -r src/sp/assets/. dist/${npm_package_config_serve_dir}/sp/",
+    "build:copy_pc": "cp -r src/pc/assets/. dist/${npm_package_config_serveDir}/",
+    "build:copy_sp": "cp -r src/sp/assets/. dist/${npm_package_config_serveDir}/sp/",
     "build": "npm-run-all clean -p build:*",
-    "watch:html_pc": "node scripts/html.js src/pc/html/ dist/${npm_package_config_serve_dir}/ --watch",
-    "watch:html_sp": "node scripts/html.js src/sp/html/ dist/${npm_package_config_serve_dir}/sp/ --watch",
-    "watch:css_pc": "chokidar 'src/pc/css/**' --initial -c 'node-sass src/pc/css/style.scss dist/${npm_package_config_serve_dir}/style.css --source-map true --source-map-contents'",
-    "watch:css_sp": "chokidar 'src/sp/css/**' --initial -c 'node-sass src/sp/css/style.scss dist/${npm_package_config_serve_dir}/sp/style.css --source-map true --source-map-contents'",
-    "watch:js_pc": "watchify src/pc/js/main.js -o dist/${npm_package_config_serve_dir}/bundle.js -d -v",
-    "watch:js_sp": "watchify src/sp/js/main.js -o dist/${npm_package_config_serve_dir}/sp/bundle.js -d -v",
-    "watch:img_pc": "chokidar 'src/pc/img/**' --initial -c 'cp -r src/pc/img/. dist/${npm_package_config_serve_dir}/img/'",
-    "watch:img_sp": "chokidar 'src/sp/img/**' --initial -c 'cp -r src/sp/img/. dist/${npm_package_config_serve_dir}/sp/img/'",
+    "watch:html_pc": "node scripts/html.js src/pc/html/ dist/${npm_package_config_serveDir}/ --watch",
+    "watch:html_sp": "node scripts/html.js src/sp/html/ dist/${npm_package_config_serveDir}/sp/ --watch",
+    "watch:css_pc": "chokidar 'src/pc/css/**' --initial -c 'node-sass src/pc/css/style.scss dist/${npm_package_config_serveDir}/style.css --source-map true --source-map-contents'",
+    "watch:css_sp": "chokidar 'src/sp/css/**' --initial -c 'node-sass src/sp/css/style.scss dist/${npm_package_config_serveDir}/sp/style.css --source-map true --source-map-contents'",
+    "watch:js_pc": "watchify src/pc/js/main.js -o dist/${npm_package_config_serveDir}/bundle.js -d -v",
+    "watch:js_sp": "watchify src/sp/js/main.js -o dist/${npm_package_config_serveDir}/sp/bundle.js -d -v",
+    "watch:img_pc": "chokidar 'src/pc/img/**' --initial -c 'cp -r src/pc/img/. dist/${npm_package_config_serveDir}/img/'",
+    "watch:img_sp": "chokidar 'src/sp/img/**' --initial -c 'cp -r src/sp/img/. dist/${npm_package_config_serveDir}/sp/img/'",
     "watch:copy_root": "chokidar 'assets/**' --initial -c 'cp -r assets/. dist/'",
-    "watch:copy_pc": "chokidar 'src/pc/assets/**' --initial -c 'cp -r src/pc/assets/. dist/${npm_package_config_serve_dir}/'",
-    "watch:copy_sp": "chokidar 'src/sp/assets/**' --initial -c 'cp -r src/sp/assets/. dist/${npm_package_config_serve_dir}/sp/'",
+    "watch:copy_pc": "chokidar 'src/pc/assets/**' --initial -c 'cp -r src/pc/assets/. dist/${npm_package_config_serveDir}/'",
+    "watch:copy_sp": "chokidar 'src/sp/assets/**' --initial -c 'cp -r src/sp/assets/. dist/${npm_package_config_serveDir}/sp/'",
     "watch": "npm-run-all -p watch:*"
   },
   "dependencies": {
