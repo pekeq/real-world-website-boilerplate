@@ -46,7 +46,7 @@ Edit project served directory in `package.json`.
 
 ```json
 "config": {
-  "serve_dir": "path/to/serve-directory"
+  "serveDir": "path/to/serve-directory"
 },
 ```
 
