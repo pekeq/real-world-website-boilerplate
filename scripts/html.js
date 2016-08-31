@@ -25,7 +25,7 @@ const render = () => {
   renderFiles.forEach(file => {
     const filePath = path.relative(srcDir, file).replace(/\.pug$/, '.html');
     const destPath = path.join(destDir, filePath);
-    const pagePath = filePath.replace(/\/?index.\.html$/, '');
+    const pagePath = filePath.replace(/\/?index\.html$/, '');
     const options = Object.assign({}, siteData, {
       pretty: true,
       root,
