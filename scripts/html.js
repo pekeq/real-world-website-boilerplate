@@ -12,8 +12,8 @@ const {_: [srcDir, destDir], watch} = require('minimist')(process.argv.slice(2))
 const siteDataPath = 'src/website.json';
 const serveDir = process.env.npm_package_config_serveDir;
 const root = {
-  pc: `/${serveDir}/`,
-  sp: `/${serveDir}/sp/`
+  pc: path.join('/', serveDir, '/'),
+  sp: path.join('/', serveDir, '/sp/')
 };
 
 const render = () => {
