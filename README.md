@@ -50,6 +50,14 @@ Edit project served directory in `package.json`.
 },
 ```
 
+If served directory is root, edit config like this.
+
+```json
+"config": {
+  "serveDir": "."
+},
+```
+
 ### Global name space for JavaScript
 
 Edit global name space in `src/{pc,sp}/js/main.js`.
@@ -103,7 +111,7 @@ Inspired by [ECSS](http://ecss.io/).
 │   │   │   └── home/               # Images used in home
 │   │   └── js/                     # Scripts for PC
 │   │       └── main.js             # Browserify entry point
-│   ├── sp/                         # Source for PC
+│   ├── sp/                         # Source for SP
 │   │   ├── assets/                 # Copy to dist/project-root/sp/
 │   │   ├── css/                    # Styles for SP
 │   │   │   ├── _core.scss
@@ -122,7 +130,7 @@ Inspired by [ECSS](http://ecss.io/).
 │   │   └── js/                     # Scripts can be used from require('shared-js')
 │   │       ├── utils.js            # Utilify functions
 │   │       └── velocity-easings.js # Expand easings of velocity
-│   └── website.json                # Variables can be used by all of HTML templates
+│   └── metadata.json               # Variables can be used by all of HTML templates
 ├── assets/                         # Copy to dist/
 ├── scripts/                        # Used by npm-scripts
 │   ├── html.js                     # Render HTML templates
