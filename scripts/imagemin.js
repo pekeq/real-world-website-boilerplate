@@ -6,7 +6,7 @@ const imagemin = require('imagemin');
 
 const {_: [srcDir, destDir]} = require('minimist')(process.argv.slice(2));
 
-const run = () => {
+const render = () => {
   const renderFiles = glob.sync(path.join(srcDir, '**/*'), {nodir: true});
 
   return Promise.all(renderFiles.map(file => {
@@ -18,4 +18,4 @@ const run = () => {
   .then(() => console.log('rendered images'));
 };
 
-run();
+render();

@@ -40,11 +40,11 @@ const render = () => {
 }
 
 if (watch) {
-  const deboucnedRender = debounce(render, 300);
+  const cb = debounce(render, 300);
 
   chokidar.watch([srcDir, metaDataPath])
-  .on('add', deboucnedRender)
-  .on('change', deboucnedRender);
+  .on('add', cb)
+  .on('change', cb);
 } else {
   render();
 }
