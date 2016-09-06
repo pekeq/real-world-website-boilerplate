@@ -1,3 +1,6 @@
+'use strict';
+const path = require('path');
+
 module.exports = {
   files: 'dist',
   server: {
@@ -7,7 +10,7 @@ module.exports = {
       ext: '.html'
     })
   },
-  startPath: `/${process.env.npm_package_config_serveDir}/`,
+  startPath: path.join('/', process.env.npm_package_config_serveDir, '/'),
   ghostMode: false,
   logFileChanges: false,
   open: false,
