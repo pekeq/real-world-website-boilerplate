@@ -1,0 +1,221 @@
+'use strict'
+
+import path from 'path'
+import fs from 'fs'
+import del from 'del'
+import browserSync from 'browser-sync'
+import source from 'vinyl-source-stream'
+import buffer from 'vinyl-buffer'
+import gulp from 'gulp'
+import gutil from 'gulp-util'
+import gulpif from 'gulp-if'
+import plumber from 'gulp-plumber'
+import sourcemaps from 'gulp-sourcemaps'
+import data from 'gulp-data'
+import pug from 'gulp-pug'
+import frontMatter from 'front-matter'
+import htmlmin from 'gulp-htmlmin'
+import sass from 'gulp-sass'
+import autoprefixer from 'gulp-autoprefixer'
+import csso from 'gulp-csso'
+import browserify from 'browserify'
+import watchify from 'watchify'
+import uglify from 'gulp-uglify'
+import imagemin from 'gulp-imagemin'
+
+const baseURL = process.env.npm_package_config_baseURL || ''
+const tmpDir = path.join('.tmp', baseURL)
+const destDir = path.join('dist', baseURL)
+
+const server = browserSync.create()
+
+const html = () =>
+  gulp.src([
+    'src/html/**/*.pug',
+    '!src/html/partial/**/*'
+  ])
+    .pipe(plumber())
+    .pipe(data(file => {
+      const metaData = JSON.parse(fs.readFileSync('src/html/metadata.json', 'utf8'))
+      const content = frontMatter(String(file.contents))
+      file.contents = new Buffer(content.body)
+      const pagePathFromBaseDir = '/' + path.relative('src/html', file.path)
+        .replace(/\.pug$/, '.html')
+        .replace(/\/?index\.html$/, '')
+      const buildPagePath = pagePath => `/${baseURL}${pagePath}`
+
+      // frontMatterに渡してない値に、勝手に違うページのキャッシュっぽいデータが入る
+      // `pug-runtime`のバグ？
+      // とりあえず`metadata.json`に`"key": null`って書いておけば回避できる
+
+      return {
+        ...metaData,
+        ...content.attributes,
+        currentPath: pagePathFromBaseDir,
+        urlFor: buildPagePath
+      }
+    }))
+    .pipe(pug())
+    .pipe(gulp.dest(tmpDir))
+    .pipe(server.stream({match: '**/*.html'}))
+    .pipe(htmlmin({
+      removeComments: true,
+      collapseWhitespace: true,
+      collapseBooleanAttributes: true,
+      removeAttributeQuotes: true,
+      removeRedundantAttributes: true,
+      removeEmptyAttributes: true,
+      removeScriptTypeAttributes: true,
+      removeStyleLinkTypeAttributes: true,
+      removeOptionalTags: true
+    }))
+    .pipe(gulp.dest(destDir))
+
+const css = () => {
+  const AUTOPREFIXER_BROWSERS = [
+    'last 1 version',
+    '> 5% in JP'
+  ]
+
+  return gulp.src('src/css/style.scss')
+    .pipe(sourcemaps.init({loadMaps: true}))
+    .pipe(sass().on('error', sass.logError))
+    .pipe(autoprefixer(AUTOPREFIXER_BROWSERS))
+    .pipe(sourcemaps.write('.', {sourceRoot: '.'}))
+    .pipe(gulp.dest(tmpDir))
+    .pipe(gulpif('*.css', csso()))
+    .pipe(gulpif('*.css', gulp.dest(destDir)))
+}
+
+let isWatchifyEnabled = false
+
+const js = () => {
+  const bundler = browserify({
+    ...watchify.args,
+    entries: 'src/js/main.js',
+    debug: true
+  })
+    .transform('babelify')
+    .plugin('licensify')
+
+  const bundle = () => bundler.bundle()
+    .on('error', err => gutil.log('Browserify Error', err))
+    .pipe(source('bundle.js'))
+    .pipe(buffer())
+    .pipe(sourcemaps.init({loadMaps: true}))
+    .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest(tmpDir))
+    .pipe(server.stream({match: '**/*.js'}))
+    .pipe(gulpif('*.js', uglify({preserveComments: 'license'})))
+    .pipe(gulpif('*.js', gulp.dest(destDir)))
+
+  if (isWatchifyEnabled) {
+    const watcher = watchify(bundler)
+    watcher.on('update', bundle)
+    watcher.on('log', gutil.log)
+  }
+
+  return bundle()
+}
+
+const enableWatchJs = done => {
+  isWatchifyEnabled = true
+  done()
+}
+
+const watchJs = gulp.series(enableWatchJs, js)
+
+const img = () =>
+  gulp.src('src/img/**/*', {since: gulp.lastRun(img)})
+    .pipe(gulp.dest(path.join(tmpDir, 'img')))
+    .pipe(server.stream())
+    .pipe(imagemin({
+      progressive: true,
+      interlaced: true
+    }))
+    .pipe(gulp.dest(path.join(destDir, 'img')))
+
+const copy = () =>
+  gulp.src('src/assets/**/*', {since: gulp.lastRun(copy)})
+    .pipe(gulp.dest(tmpDir))
+    .pipe(server.stream())
+    .pipe(gulp.dest(destDir))
+
+export const clean = () => del(['.tmp', 'dist'])
+
+const serve = done => {
+  server.init({
+    notify: false,
+    server: '.tmp',
+    startPath: path.join('/', baseURL, '/'),
+    ghostMode: false,
+    open: false,
+    reloadDebounce: 300
+  })
+
+  done()
+}
+
+export const serveDist = done => {
+  server.init({
+    notify: false,
+    server: 'dist',
+    startPath: path.join('/', baseURL, '/'),
+    ghostMode: false,
+    open: false,
+    reloadDebounce: 300
+  })
+
+  done()
+}
+
+const watch = done => {
+  gulp.watch('src/html/**/*', html)
+    .on('unlink', file => {
+      const filePathFromSrc = path.relative('src/html', file)
+      const compiledFilePath = filePathFromSrc.replace(/\.pug$/, '.html')
+      const tmpFilePath = path.resolve(tmpDir, compiledFilePath)
+      const destFilePath = path.resolve(destDir, compiledFilePath)
+
+      del.sync([
+        tmpFilePath,
+        destFilePath
+      ])
+    })
+
+  gulp.watch('src/css/**/*.{scss,css}', css)
+
+  gulp.watch('src/img/**/*', img)
+    .on('unlink', file => {
+      const filePathFromSrc = path.relative('src/img', file)
+      const tmpFilePath = path.resolve(tmpDir, filePathFromSrc)
+      const destFilePath = path.resolve(destDir, filePathFromSrc)
+
+      del.sync([
+        tmpFilePath,
+        destFilePath
+      ])
+    })
+
+  gulp.watch('src/assets/**/*', copy)
+    .on('unlink', file => {
+      const filePathFromSrc = path.relative('src/assets', file)
+      const tmpFilePath = path.resolve(tmpDir, filePathFromSrc)
+      const destFilePath = path.resolve(destDir, filePathFromSrc)
+
+      del.sync([
+        tmpFilePath,
+        destFilePath
+      ])
+    })
+
+  done()
+}
+
+export default gulp.series(
+  gulp.parallel(html, css, watchJs, img, copy),
+  serve,
+  watch
+)
+
+export const build = gulp.parallel(html, css, js, img, copy)
