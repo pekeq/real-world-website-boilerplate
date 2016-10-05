@@ -16,15 +16,5 @@ dispatcher.on('about', () => {
 })
 
 window.App = {
-  run(...args) {
-    if (['interactive', 'complete'].includes(document.readyState)) {
-      dispatcher.run(...args)
-    } else {
-      document.addEventListener(
-        'DOMContentLoaded',
-        () => dispatcher.run(...args),
-        false
-      )
-    }
-  }
+  run: (...args) => dispatcher.run(...args)
 }
