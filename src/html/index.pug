@@ -1,0 +1,16 @@
+---
+description: this is index page
+---
+doctype html
+html(lang= lang)
+  include partial/head
+
+  body
+    include partial/global-header
+
+    h1 home
+    p= description
+
+    include partial/scripts
+    script.
+      window.App.run('home')

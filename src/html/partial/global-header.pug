@@ -1,0 +1,14 @@
+header
+  h1= siteTitle
+  nav
+    ul
+      li
+        if '/' === currentPath
+          | Index
+        else
+          a(href= urlFor('/')) Index
+      li
+        if '/about.html' === currentPath
+          | About
+        else
+          a(href= urlFor('/about.html')) About

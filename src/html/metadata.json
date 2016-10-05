@@ -1,0 +1,9 @@
+{
+  "domain": "example.com",
+  "lang": "ja",
+  "region": "JP",
+  "scheme": "http:",
+  "title": null,
+  "siteTitle": "site title",
+  "cover": "/img/ogp.png"
+}

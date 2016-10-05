@@ -1,0 +1,18 @@
+head(prefix="og: http://ogp.me/ns#")
+  meta(charset="utf-8")
+  meta(name="viewport", content="width=device-width, initial-scale=1")
+  if title
+    title= `${title} - ${siteTitle}`
+  else
+    title= siteTitle
+  meta(name="description", content= description)
+  meta(name="twitter:card", content="summary_large_image")
+  meta(property="og:title", content= title || siteTitle)
+  meta(property="og:type", content="website")
+  meta(property="og:image", content= `${scheme}//${domain}${urlFor(cover)}`)
+  meta(property="og:url", content= `${scheme}//${domain}${urlFor(currentPath)}`)
+  meta(property="og:description", content= description)
+  meta(property="og:site_name", content= siteTitle)
+  meta(property="og:locale", content= `${lang}_${region}`)
+  link(rel="canonical", href= urlFor(currentPath))
+  link(rel="stylesheet", href= urlFor("/style.css"))
