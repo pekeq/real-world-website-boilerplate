@@ -146,7 +146,7 @@ export const clean = () => del(['.tmp', 'dist'])
 const serve = done => {
   server.init({
     notify: false,
-    server: '.tmp',
+    server: ['.tmp', 'assets'],
     startPath: path.join('/', baseURL, '/'),
     ghostMode: false,
     open: false,
@@ -159,7 +159,7 @@ const serve = done => {
 export const serveDist = done => {
   server.init({
     notify: false,
-    server: 'dist',
+    server: ['dist', 'assets'],
     startPath: path.join('/', baseURL, '/'),
     ghostMode: false,
     open: false,
