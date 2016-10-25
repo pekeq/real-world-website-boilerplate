@@ -12,9 +12,7 @@ Those easings can be used.
 - easeOutBounce
 - easeInOutBounce
 */
-'use strict';
-
-import Velocity from 'velocity-animate'
+const Velocity = require('velocity-animate')
 
 const baseEasings = {}
 

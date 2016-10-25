@@ -1,27 +1,24 @@
-'use strict'
-
-import path from 'path'
-import fs from 'fs'
-import del from 'del'
-import browserSync from 'browser-sync'
-import source from 'vinyl-source-stream'
-import buffer from 'vinyl-buffer'
-import gulp from 'gulp'
-import gutil from 'gulp-util'
-import gulpif from 'gulp-if'
-import plumber from 'gulp-plumber'
-import sourcemaps from 'gulp-sourcemaps'
-import data from 'gulp-data'
-import pug from 'gulp-pug'
-import frontMatter from 'front-matter'
-import htmlmin from 'gulp-htmlmin'
-import sass from 'gulp-sass'
-import autoprefixer from 'gulp-autoprefixer'
-import csso from 'gulp-csso'
-import browserify from 'browserify'
-import watchify from 'watchify'
-import uglify from 'gulp-uglify'
-import imagemin from 'gulp-imagemin'
+const path = require('path')
+const fs = require('fs')
+const del = require('del')
+const browserSync = require('browser-sync')
+const source = require('vinyl-source-stream')
+const buffer = require('vinyl-buffer')
+const gulp = require('gulp')
+const gutil = require('gulp-util')
+const gulpif = require('gulp-if')
+const plumber = require('gulp-plumber')
+const sourcemaps = require('gulp-sourcemaps')
+const data = require('gulp-data')
+const pug = require('gulp-pug')
+const htmlmin = require('gulp-htmlmin')
+const sass = require('gulp-sass')
+const autoprefixer = require('gulp-autoprefixer')
+const csso = require('gulp-csso')
+const browserify = require('browserify')
+const watchify = require('watchify')
+const uglify = require('gulp-uglify')
+const imagemin = require('gulp-imagemin')
 
 const baseURL = process.env.npm_package_config_baseURL || ''
 const tmpDir = path.join('.tmp', baseURL)
@@ -37,20 +34,16 @@ const html = () =>
     .pipe(plumber())
     .pipe(data(file => {
       const metaData = JSON.parse(fs.readFileSync('src/html/metadata.json', 'utf8'))
-      const content = frontMatter(String(file.contents))
-      file.contents = new Buffer(content.body)
+      const pageDataPath = file.path.replace(/\.pug$/, '.json')
+      const pageData = fs.existsSync(pageDataPath) ? JSON.parse(fs.readFileSync(pageDataPath)) : null
       const pagePathFromBaseDir = '/' + path.relative('src/html', file.path)
         .replace(/\.pug$/, '.html')
         .replace(/\/?index\.html$/, '')
       const buildPagePath = pagePath => `/${baseURL}${pagePath}`
 
-      // frontMatterに渡してない値に、勝手に違うページのキャッシュっぽいデータが入る
-      // `pug-runtime`のバグ？
-      // とりあえず`metadata.json`に`"key": null`って書いておけば回避できる
-
       return {
         ...metaData,
-        ...content.attributes,
+        ...pageData,
         currentPath: pagePathFromBaseDir,
         urlFor: buildPagePath
       }
@@ -90,15 +83,15 @@ const css = () => {
 let isWatchifyEnabled = false
 
 const js = () => {
-  const bundler = browserify({
+  const bundler = browserify('src/js/main.js', {
     ...watchify.args,
-    entries: 'src/js/main.js',
     debug: true
   })
     .transform('babelify')
     .plugin('licensify')
 
-  const bundle = () => bundler.bundle()
+  const bundle = () => bundler
+    .bundle()
     .on('error', err => gutil.log('Browserify Error', err))
     .pipe(source('bundle.js'))
     .pipe(buffer())
@@ -146,7 +139,10 @@ export const clean = () => del(['.tmp', 'dist'])
 const serve = done => {
   server.init({
     notify: false,
-    server: ['.tmp', 'assets'],
+    server: [
+      '.tmp',
+      'vendor-assets'
+    ],
     startPath: path.join('/', baseURL, '/'),
     ghostMode: false,
     open: false,
@@ -159,7 +155,10 @@ const serve = done => {
 export const serveDist = done => {
   server.init({
     notify: false,
-    server: ['dist', 'assets'],
+    server: [
+      'dist',
+      'vendor-assets'
+    ],
     startPath: path.join('/', baseURL, '/'),
     ghostMode: false,
     open: false,
