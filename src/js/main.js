@@ -1,9 +1,8 @@
-'use strict'
+import './velocity-easings.js'
 
-import 'picturefill'
-import './velocity-easings'
-import PageDispatcher from '@yuheiy/page-dispatcher'
-import Velocity from 'velocity-animate'
+require('picturefill')
+const PageDispatcher = require('@yuheiy/page-dispatcher')
+const Velocity = require('velocity-animate')
 
 const dispatcher = new PageDispatcher()
 
