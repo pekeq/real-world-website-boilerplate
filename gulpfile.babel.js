@@ -39,7 +39,7 @@ const html = () =>
       const pagePathFromBaseDir = '/' + path.relative('src/html', file.path)
         .replace(/\.pug$/, '.html')
         .replace(/\/?index\.html$/, '')
-      const buildPagePath = pagePath => `/${baseURL}${pagePath}`
+      const buildPagePath = pagePath => path.join('/', baseURL, pagePath)
 
       return {
         ...metaData,
@@ -50,6 +50,7 @@ const html = () =>
     }))
     .pipe(pug())
     .pipe(gulp.dest(tmpDir))
+    .pipe(server.stream())
     .pipe(htmlmin({
       removeComments: true,
       collapseWhitespace: true,
@@ -75,6 +76,7 @@ const css = () => {
     .pipe(autoprefixer(AUTOPREFIXER_BROWSERS))
     .pipe(sourcemaps.write('.', {sourceRoot: '.'}))
     .pipe(gulp.dest(tmpDir))
+    .pipe(server.stream({match: '**/*.css'}))
     .pipe(gulpif('*.css', csso()))
     .pipe(gulpif('*.css', gulp.dest(destDir)))
 }
@@ -97,6 +99,7 @@ const js = () => {
     .pipe(sourcemaps.init({loadMaps: true}))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(tmpDir))
+    .pipe(server.stream({match: '**/*.js'}))
     .pipe(gulpif('*.js', uglify({preserveComments: 'license'})))
     .pipe(gulpif('*.js', gulp.dest(destDir)))
 
@@ -119,6 +122,7 @@ const watchJs = gulp.series(enableWatchJs, js)
 const img = () =>
   gulp.src('src/img/**/*', {since: gulp.lastRun(img)})
     .pipe(gulp.dest(path.join(tmpDir, 'img')))
+    .pipe(server.stream())
     .pipe(imagemin({
       progressive: true,
       interlaced: true
@@ -128,17 +132,13 @@ const img = () =>
 const copy = () =>
   gulp.src('src/assets/**/*', {since: gulp.lastRun(copy)})
     .pipe(gulp.dest(tmpDir))
+    .pipe(server.stream())
     .pipe(gulp.dest(destDir))
 
 export const clean = () => del(['.tmp', 'dist'])
 
 const serve = done => {
   server.init({
-    files: [
-      '.tmp/**/*',
-      '!.tmp/**/*.map',
-      'vendor-assets/**/*'
-    ],
     notify: false,
     server: [
       '.tmp',
