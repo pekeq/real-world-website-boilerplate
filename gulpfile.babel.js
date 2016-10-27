@@ -50,7 +50,6 @@ const html = () =>
     }))
     .pipe(pug())
     .pipe(gulp.dest(tmpDir))
-    .pipe(server.stream({match: '**/*.html'}))
     .pipe(htmlmin({
       removeComments: true,
       collapseWhitespace: true,
@@ -98,7 +97,6 @@ const js = () => {
     .pipe(sourcemaps.init({loadMaps: true}))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(tmpDir))
-    .pipe(server.stream({match: '**/*.js'}))
     .pipe(gulpif('*.js', uglify({preserveComments: 'license'})))
     .pipe(gulpif('*.js', gulp.dest(destDir)))
 
@@ -121,7 +119,6 @@ const watchJs = gulp.series(enableWatchJs, js)
 const img = () =>
   gulp.src('src/img/**/*', {since: gulp.lastRun(img)})
     .pipe(gulp.dest(path.join(tmpDir, 'img')))
-    .pipe(server.stream())
     .pipe(imagemin({
       progressive: true,
       interlaced: true
@@ -131,13 +128,17 @@ const img = () =>
 const copy = () =>
   gulp.src('src/assets/**/*', {since: gulp.lastRun(copy)})
     .pipe(gulp.dest(tmpDir))
-    .pipe(server.stream())
     .pipe(gulp.dest(destDir))
 
 export const clean = () => del(['.tmp', 'dist'])
 
 const serve = done => {
   server.init({
+    files: [
+      '.tmp/**/*',
+      '!.tmp/**/*.map',
+      'vendor-assets/**/*'
+    ],
     notify: false,
     server: [
       '.tmp',
