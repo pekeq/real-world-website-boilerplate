@@ -1,3 +1,7 @@
-@function image($file) {
-  @return url("img/#{$file}");
+@function asset($dir, $relative-path) {
+  @return url("#{$dir}/#{$relative-path}");
+}
+
+@function image($relative-path) {
+  @return asset("img", $relative-path);
 }
