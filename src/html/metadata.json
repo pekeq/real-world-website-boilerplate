@@ -4,5 +4,5 @@
   "region": "JP",
   "scheme": "http:",
   "siteTitle": "site title",
-  "cover": "/img/ogp.png"
+  "cover": "img/ogp.png"
 }
