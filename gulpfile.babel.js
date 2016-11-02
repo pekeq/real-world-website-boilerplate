@@ -121,8 +121,6 @@ const watchJs = gulp.series(enableWatchJs, js)
 
 const img = () =>
   gulp.src('src/img/**/*', {since: gulp.lastRun(img)})
-    .pipe(gulp.dest(path.join(tmpDir, 'img')))
-    .pipe(server.stream())
     .pipe(imagemin({
       progressive: true,
       interlaced: true
@@ -131,8 +129,6 @@ const img = () =>
 
 const copy = () =>
   gulp.src('src/assets/**/*', {since: gulp.lastRun(copy)})
-    .pipe(gulp.dest(tmpDir))
-    .pipe(server.stream())
     .pipe(gulp.dest(destDir))
 
 export const clean = () => del(['.tmp', 'dist'])
@@ -140,10 +136,16 @@ export const clean = () => del(['.tmp', 'dist'])
 const serve = done => {
   server.init({
     notify: false,
-    server: [
-      '.tmp',
-      'vendor-assets'
-    ],
+    server: {
+      baseDir: [
+        '.tmp',
+        'vendor-assets'
+      ],
+      routes: {
+        [`${path.join('/', baseURL)}`]: 'src/assets',
+        [`${path.join('/', baseURL, '/img')}`]: 'src/img'
+      }
+    },
     startPath: path.join('/', baseURL, '/'),
     ghostMode: false,
     open: false,
@@ -171,51 +173,21 @@ export const serveDist = done => {
 
 const watch = done => {
   gulp.watch('src/html/**/*', html)
-    .on('unlink', file => {
-      const filePathFromSrc = path.relative('src/html', file)
-      const compiledFilePath = filePathFromSrc.replace(/\.pug$/, '.html')
-      const tmpFilePath = path.resolve(tmpDir, compiledFilePath)
-      const destFilePath = path.resolve(destDir, compiledFilePath)
-
-      del.sync([
-        tmpFilePath,
-        destFilePath
-      ])
-    })
-
   gulp.watch('src/css/**/*.{scss,css}', css)
-
   gulp.watch('src/img/**/*', img)
-    .on('unlink', file => {
-      const filePathFromSrc = path.relative('src/img', file)
-      const tmpFilePath = path.resolve(tmpDir, filePathFromSrc)
-      const destFilePath = path.resolve(destDir, filePathFromSrc)
-
-      del.sync([
-        tmpFilePath,
-        destFilePath
-      ])
-    })
-
   gulp.watch('src/assets/**/*', copy)
-    .on('unlink', file => {
-      const filePathFromSrc = path.relative('src/assets', file)
-      const tmpFilePath = path.resolve(tmpDir, filePathFromSrc)
-      const destFilePath = path.resolve(destDir, filePathFromSrc)
-
-      del.sync([
-        tmpFilePath,
-        destFilePath
-      ])
-    })
 
   done()
 }
 
 export default gulp.series(
+  clean,
   gulp.parallel(html, css, watchJs, img, copy),
   serve,
   watch
 )
 
-export const build = gulp.parallel(html, css, js, img, copy)
+export const build = gulp.series(
+  clean,
+  gulp.parallel(html, css, js, img, copy)
+)
