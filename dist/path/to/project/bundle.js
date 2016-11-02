@@ -4,27 +4,33 @@
  *
  * @yuheiy/page-dispatcher:
  *   license: MIT (http://opensource.org/licenses/MIT)
- *   author: Yuhei Yasuda <yuhei.yasuda1003@gmail.com> (https://yhey.me/)
+ *   author: Yuhei Yasuda <yuhei.yasuda1003@gmail.com>
+ *   maintainers: yuheiy <yuhei.yasuda1003@gmail.com>
  *   homepage: https://github.com/yuheiy/page-dispatcher
  *   version: 0.0.2
  *
  * babel-runtime:
  *   license: MIT (http://opensource.org/licenses/MIT)
  *   author: Sebastian McKenzie <sebmck@gmail.com>
+ *   maintainers: amasad <amjad.masad@gmail.com>, hzoo <hi@henryzoo.com>, jmm <npm-public@jessemccarthy.net>, loganfsmyth <loganfsmyth@gmail.com>, sebmck <sebmck@gmail.com>
  *   version: 6.18.0
  *
  * core-js:
  *   license: MIT (http://opensource.org/licenses/MIT)
+ *   maintainers: zloirock <zloirock@zloirock.ru>
+ *   homepage: https://github.com/zloirock/core-js#readme
  *   version: 2.4.1
  *
  * picturefill:
  *   license: MIT (http://opensource.org/licenses/MIT)
  *   author: Scott Jehl <scottjehl@gmail.com>
+ *   maintainers: wilto <mat@matmarquis.com>, scottjehl <scott@filamentgroup.com>
  *   homepage: https://scottjehl.github.io/picturefill/
  *   version: 3.0.2
  *
  * velocity-animate:
  *   license: MIT (http://opensource.org/licenses/MIT)
+ *   maintainers: julianshapiro <info@julianshapiro.com>, kvirani <kvirani@gmail.com>
  *   homepage: http://velocityjs.org
  *   version: 1.3.1
  *
