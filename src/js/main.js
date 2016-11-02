@@ -1,4 +1,5 @@
-import './velocity-easings.js'
+// import './velocity-easings.js'
+import {$, $$} from './utils.js'
 
 require('picturefill')
 const PageDispatcher = require('@yuheiy/page-dispatcher')
