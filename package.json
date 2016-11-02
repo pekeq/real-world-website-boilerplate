@@ -11,6 +11,7 @@
   "dependencies": {
     "@yuheiy/page-dispatcher": "0.0.2",
     "babel-runtime": "^6.18.0",
+    "document-promises": "^2.0.0",
     "normalize.css": "^5.0.0",
     "picturefill": "^3.0.2",
     "velocity-animate": "^1.3.1"
