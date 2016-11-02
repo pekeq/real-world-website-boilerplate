@@ -143,7 +143,7 @@ const serve = done => {
       ],
       routes: {
         [`${path.join('/', baseURL)}`]: 'src/assets',
-        [`${path.join('/', baseURL, '/img')}`]: 'src/img'
+        [`${path.join('/', baseURL, 'img')}`]: 'src/img'
       }
     },
     startPath: path.join('/', baseURL, '/'),
