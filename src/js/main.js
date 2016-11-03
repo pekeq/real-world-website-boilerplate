@@ -4,7 +4,7 @@ import {$, $$} from './utils.js'
 
 require('picturefill')
 const PageDispatcher = require('@yuheiy/page-dispatcher')
-const Velocity = require('velocity-animate')
+// const Velocity = require('velocity-animate')
 
 const dispatcher = new PageDispatcher()
 
