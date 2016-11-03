@@ -70,7 +70,7 @@ const css = () => {
     '> 5% in JP'
   ]
 
-  return gulp.src('src/css/style.scss')
+  return gulp.src('src/css/main.scss')
     .pipe(sourcemaps.init({loadMaps: true}))
     .pipe(sass().on('error', sass.logError))
     .pipe(autoprefixer(AUTOPREFIXER_BROWSERS))
@@ -94,7 +94,7 @@ const js = () => {
   const bundle = () => bundler
     .bundle()
     .on('error', err => gutil.log('Browserify Error', err))
-    .pipe(source('bundle.js'))
+    .pipe(source('main.js'))
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
     .pipe(sourcemaps.write('.'))
