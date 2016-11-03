@@ -121,10 +121,7 @@ const watchJs = gulp.series(enableWatchJs, js)
 
 const img = () =>
   gulp.src('src/img/**/*', {since: gulp.lastRun(img)})
-    .pipe(imagemin({
-      progressive: true,
-      interlaced: true
-    }))
+    .pipe(imagemin())
     .pipe(gulp.dest(path.join(destDir, 'img')))
 
 const copy = () =>
