@@ -131,7 +131,7 @@ const copy = () =>
   gulp.src('src/assets/**/*', {since: gulp.lastRun(copy)})
     .pipe(gulp.dest(destDir))
 
-export const clean = () => del(['.tmp', 'dist'])
+const clean = () => del(['.tmp', 'dist'])
 
 const serve = done => {
   server.init({
@@ -164,8 +164,7 @@ export const serveDist = done => {
     ],
     startPath: path.join('/', baseURL, '/'),
     ghostMode: false,
-    open: false,
-    reloadDebounce: 300
+    open: false
   })
 
   done()

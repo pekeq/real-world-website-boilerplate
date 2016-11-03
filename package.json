@@ -6,7 +6,7 @@
   "scripts": {
     "start": "gulp",
     "build": "gulp build",
-    "serve:dist": "gulp serveDist"
+    "production": "gulp serveDist"
   },
   "dependencies": {
     "@yuheiy/page-dispatcher": "0.0.2",
