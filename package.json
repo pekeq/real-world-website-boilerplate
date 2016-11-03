@@ -9,7 +9,7 @@
     "production": "gulp serveDist"
   },
   "dependencies": {
-    "@yuheiy/page-dispatcher": "0.0.2",
+    "@yuheiy/page-dispatcher": "0.0.3",
     "babel-runtime": "^6.18.0",
     "document-promises": "^2.0.0",
     "picturefill": "^3.0.2",
@@ -32,7 +32,7 @@
     "gulp-data": "^1.2.1",
     "gulp-htmlmin": "^3.0.0",
     "gulp-if": "^2.0.1",
-    "gulp-imagemin": "^3.1.0",
+    "gulp-imagemin": "^3.1.1",
     "gulp-plumber": "^1.1.0",
     "gulp-pug": "github:yuheiy/gulp-pug#fix-data-property",
     "gulp-sass": "^2.3.2",
