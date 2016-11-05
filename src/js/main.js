@@ -1,6 +1,6 @@
 // import './velocity-easings.js'
 import {interactive} from 'document-promises'
-import {$, $$} from './utils.js'
+import {wait, $, $$} from './utils.js'
 
 require('picturefill')
 const PageDispatcher = require('@yuheiy/page-dispatcher')
@@ -18,6 +18,6 @@ dispatcher.on('about', () => {
 
 window.App = class App {
   static run(...args) {
-    interactive.then(() => dispatcher.run(...args))
+    return interactive.then(() => dispatcher.run(...args))
   }
 }
