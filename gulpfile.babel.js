@@ -125,7 +125,7 @@ const img = () =>
     .pipe(gulp.dest(path.join(destDir, 'img')))
 
 const copy = () =>
-  gulp.src('src/assets/**/*', {since: gulp.lastRun(copy)})
+  gulp.src('src/static/**/*', {since: gulp.lastRun(copy)})
     .pipe(gulp.dest(destDir))
 
 const clean = () => del(['.tmp', 'dist'])
@@ -139,7 +139,7 @@ const serve = done => {
         'vendor-assets'
       ],
       routes: {
-        [`${path.join('/', baseURL)}`]: 'src/assets',
+        [`${path.join('/', baseURL)}`]: 'src/static',
         [`${path.join('/', baseURL, 'img')}`]: 'src/img'
       }
     },
@@ -171,7 +171,7 @@ const watch = done => {
   gulp.watch('src/html/**/*', html)
   gulp.watch('src/css/**/*.{scss,css}', css)
   gulp.watch('src/img/**/*', img)
-  gulp.watch('src/assets/**/*', copy)
+  gulp.watch('src/static/**/*', copy)
 
   done()
 }
