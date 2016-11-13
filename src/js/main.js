@@ -1,5 +1,5 @@
 // import './velocity-easings.js'
-import {wait, $, $$, interactive} from './utils.js'
+import {wait, $, $$} from './utils.js'
 
 require('picturefill')
 const PageDispatcher = require('@yuheiy/page-dispatcher')
@@ -16,8 +16,5 @@ dispatcher.on('about', () => {
 })
 
 window.App = class App {
-  static async run(...args) {
-    await interactive
-    return dispatcher.run(...args)
-  }
+  static run = (...args) => dispatcher.run(...args)
 }
