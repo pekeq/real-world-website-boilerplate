@@ -18,11 +18,13 @@ const csso = require('gulp-csso')
 const browserify = require('browserify')
 const watchify = require('watchify')
 const uglify = require('gulp-uglify')
+const concat = require('gulp-concat')
 const imagemin = require('gulp-imagemin')
 
-const baseURL = process.env.npm_package_config_baseURL || ''
-const tmpDir = path.join('.tmp', baseURL)
-const destDir = path.join('dist', baseURL)
+const BASE_DIR = 'path/to/project'
+
+const tmpDir = path.join('.tmp', BASE_DIR)
+const destDir = path.join('dist', BASE_DIR)
 
 const server = browserSync.create()
 
@@ -39,7 +41,7 @@ const html = () =>
       const pagePathFromBaseDir = '/' + path.relative('src/html', file.path)
         .replace(/\.pug$/, '.html')
         .replace(/\/?index\.html$/, '')
-      const buildPagePath = pagePath => path.join('/', baseURL, pagePath)
+      const buildPagePath = pagePath => path.join('/', BASE_DIR, pagePath)
 
       return {
         ...metaData,
@@ -75,15 +77,15 @@ const css = () => {
     .pipe(sass().on('error', sass.logError))
     .pipe(autoprefixer(AUTOPREFIXER_BROWSERS))
     .pipe(sourcemaps.write('.', {sourceRoot: '.'}))
-    .pipe(gulp.dest(tmpDir))
+    .pipe(gulp.dest(path.join(tmpDir, 'css')))
     .pipe(server.stream({match: '**/*.css'}))
     .pipe(gulpif('*.css', csso()))
-    .pipe(gulpif('*.css', gulp.dest(destDir)))
+    .pipe(gulpif('*.css', gulp.dest(path.join(destDir, 'css'))))
 }
 
 let isWatchifyEnabled = false
 
-const js = () => {
+const mainJs = () => {
   const bundler = browserify('src/js/main.js', {
     ...watchify.args,
     debug: true
@@ -98,10 +100,10 @@ const js = () => {
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
     .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest(tmpDir))
+    .pipe(gulp.dest(path.join(tmpDir, 'js')))
     .pipe(server.stream({match: '**/*.js'}))
     .pipe(gulpif('*.js', uglify({preserveComments: 'license'})))
-    .pipe(gulpif('*.js', gulp.dest(destDir)))
+    .pipe(gulpif('*.js', gulp.dest(path.join(destDir, 'js'))))
 
   if (isWatchifyEnabled) {
     const watcher = watchify(bundler)
@@ -111,6 +113,20 @@ const js = () => {
 
   return bundle()
 }
+
+const polyfillJs = () => {
+  const polyfills = [
+    'node_modules/picturefill/dist/picturefill.js'
+  ]
+
+  return gulp.src(polyfills)
+    .pipe(concat('polyfill.js'))
+    .pipe(gulp.dest(path.join(tmpDir, 'js')))
+    .pipe(uglify({preserveComments: 'license'}))
+    .pipe(gulp.dest(path.join(destDir, 'js')))
+}
+
+const js = gulp.parallel(mainJs, polyfillJs)
 
 const enableWatchJs = done => {
   isWatchifyEnabled = true
@@ -139,11 +155,11 @@ const serve = done => {
         'vendor-assets'
       ],
       routes: {
-        [`${path.join('/', baseURL)}`]: 'src/static',
-        [`${path.join('/', baseURL, 'img')}`]: 'src/img'
+        [`${path.join('/', BASE_DIR)}`]: 'src/static',
+        [`${path.join('/', BASE_DIR, 'img')}`]: 'src/img'
       }
     },
-    startPath: path.join('/', baseURL, '/'),
+    startPath: path.join('/', BASE_DIR, '/'),
     ghostMode: false,
     open: false,
     reloadDebounce: 300
@@ -159,7 +175,7 @@ export const serveDist = done => {
       'dist',
       'vendor-assets'
     ],
-    startPath: path.join('/', baseURL, '/'),
+    startPath: path.join('/', BASE_DIR, '/'),
     ghostMode: false,
     open: false
   })
