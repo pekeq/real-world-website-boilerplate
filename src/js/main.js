@@ -1,7 +1,6 @@
 // import './velocity-easings.js'
 import {wait, $, $$} from './utils.js'
 
-require('picturefill')
 const PageDispatcher = require('@yuheiy/page-dispatcher')
 // const Velocity = require('velocity-animate')
 
@@ -15,6 +14,6 @@ dispatcher.on('about', () => {
   console.log('about')
 })
 
-window.App = class App {
+window.App = class {
   static run = (...args) => dispatcher.run(...args)
 }
