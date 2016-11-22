@@ -2,12 +2,10 @@ doctype html
 html(lang= lang)
   include partial/head
 
-  body
+  body(data-page-type="about")
     include partial/global-header
 
     h1= title
     p= description
 
     include partial/scripts
-    script.
-      window.App.run('about')

@@ -14,6 +14,5 @@ dispatcher.on('about', () => {
   console.log('about')
 })
 
-window.App = class {
-  static run = (...args) => dispatcher.run(...args)
-}
+const currentPageType = document.body.dataset.pageType
+dispatcher.run(currentPageType)
