@@ -31,7 +31,7 @@ const server = browserSync.create()
 const html = () =>
   gulp.src([
     'src/html/**/*.pug',
-    '!src/html/partial/**/*'
+    '!src/html/partial/**/*',
   ])
     .pipe(plumber())
     .pipe(data(file => {
@@ -47,7 +47,7 @@ const html = () =>
         ...metaData,
         ...pageData,
         currentPath: pagePathFromBaseDir,
-        urlFor: buildPagePath
+        urlFor: buildPagePath,
       }
     }))
     .pipe(pug())
@@ -62,14 +62,14 @@ const html = () =>
       removeEmptyAttributes: true,
       removeScriptTypeAttributes: true,
       removeStyleLinkTypeAttributes: true,
-      removeOptionalTags: true
+      removeOptionalTags: true,
     }))
     .pipe(gulp.dest(destDir))
 
 const css = () => {
   const AUTOPREFIXER_BROWSERS = [
     'last 1 version',
-    '> 5% in JP'
+    '> 5% in JP',
   ]
 
   return gulp.src('src/css/main.scss')
@@ -88,7 +88,7 @@ let isWatchifyEnabled = false
 const mainJs = () => {
   const bundler = browserify('src/js/main.js', {
     ...watchify.args,
-    debug: true
+    debug: true,
   })
     .transform('babelify')
     .plugin('licensify')
@@ -116,7 +116,7 @@ const mainJs = () => {
 
 const polyfillJs = () => {
   const polyfills = [
-    'node_modules/picturefill/dist/picturefill.js'
+    'node_modules/picturefill/dist/picturefill.js',
   ]
 
   return gulp.src(polyfills)
@@ -152,17 +152,17 @@ const serve = done => {
     server: {
       baseDir: [
         '.tmp',
-        'vendor-assets'
+        'vendor-assets',
       ],
       routes: {
         [`${path.join('/', BASE_DIR)}`]: 'src/static',
-        [`${path.join('/', BASE_DIR, 'img')}`]: 'src/img'
+        [`${path.join('/', BASE_DIR, 'img')}`]: 'src/img',
       }
     },
     startPath: path.join('/', BASE_DIR, '/'),
     ghostMode: false,
     open: false,
-    reloadDebounce: 300
+    reloadDebounce: 300,
   })
 
   done()
@@ -173,11 +173,11 @@ export const serveDist = done => {
     notify: false,
     server: [
       'dist',
-      'vendor-assets'
+      'vendor-assets',
     ],
     startPath: path.join('/', BASE_DIR, '/'),
     ghostMode: false,
-    open: false
+    open: false,
   })
 
   done()
