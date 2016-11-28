@@ -176,8 +176,10 @@ body(data-page-type="home")
 [
   'home',
   'about',
-  'company',
-].forEach(type => dispatcher.on(type, require(`./pages/${name}`).default))
+  'products',
+  'products/foods',
+  'products/drink',
+].forEach(type => dispatcher.on(type, require(`./pages/${type}`).default))
 ```
 
 `src/js/pages/home.js`
