@@ -66,7 +66,7 @@ const serve = done => {
 
 ##### currentPath
 
-`src/html`から見た相対パスを提供する変数です。例えば、`src/html/subdir/page.pug`というファイルには、`/page.html`を提供します。`index.pug`というファイル名の場合のみ例外で、`/`という値を提供します。
+`src/html`から見た相対パスを提供する変数です。例えば、`src/html/subdir/page.pug`というファイルには、`/subdir/page.html`を提供します。`index.pug`というファイル名の場合のみ例外で、`/`という値を提供します。
 
 ##### urlFor(relativePath)
 
