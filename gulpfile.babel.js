@@ -176,7 +176,7 @@ export const serveDist = done => {
         'dist',
         'vendor-assets',
       ],
-    }
+    },
     startPath: path.join('/', BASE_DIR, '/'),
     ghostMode: false,
     open: false,
