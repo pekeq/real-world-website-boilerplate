@@ -26,13 +26,7 @@ const BASE_DIR = ''
 
 `vendor_assets/`というディレクトリ以下に、共通ヘッダーや共通CSSなどのファイルを配置すると、開発サーバーから参照することができます。ここに配置されたファイルは`dist/`以下には格納されません。
 
-SSIを利用したい場合は、以下のモジュールをインストールします。
-
-```bash
-npm i -D browsersync-ssi
-```
-
-次に、`gulpfile.babel.js`を以下のように変更します。
+SSIを利用したい場合は、`gulpfile.babel.js`に以下のように書き加えます。
 
 ```javascript
 const serve = done => {
@@ -40,10 +34,26 @@ const serve = done => {
     // 省略
     server: {
       // 省略
-      middleware: require('browsersync-ssi')({
-        baseDir: path.resolve('dist'),
-        ext: '.html',
-      }),
+      middleware(req, res, next) {
+        const exp = '.html'
+        const baseDir = '.tmp'
+        const {pathname} = require('url').parse(req.originalUrl || req.url)
+        const filename = path.join(baseDir, pathname.endsWith('/') ? `${pathname}index${exp}` : pathname)
+
+        if (filename.endsWith(exp) && fs.existsSync(filename)) {
+          const regexp = /<!--[ ]*#([a-z]+)([ ]+([a-z]+)="(.+?)")*[ ]*-->/g
+
+          res.end(fs.readFileSync(filename, 'utf8').replace(regexp, (_directive, directiveName, _, __, includeFilePath) => {
+            if (directiveName === 'include') {
+              return fs.readFileSync(path.join('vendor-assets', includeFilePath))
+            } else {
+              throw new Error('Not supported')
+            }
+          }))
+        } else {
+          next()
+        }
+      },
     },
     // 省略
   })
