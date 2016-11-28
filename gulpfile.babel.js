@@ -157,7 +157,7 @@ const serve = done => {
       routes: {
         [`${path.join('/', BASE_DIR)}`]: 'src/static',
         [`${path.join('/', BASE_DIR, 'img')}`]: 'src/img',
-      }
+      },
     },
     startPath: path.join('/', BASE_DIR, '/'),
     ghostMode: false,
@@ -171,10 +171,12 @@ const serve = done => {
 export const serveDist = done => {
   server.init({
     notify: false,
-    server: [
-      'dist',
-      'vendor-assets',
-    ],
+    server: {
+      baseDir: [
+        'dist',
+        'vendor-assets',
+      ],
+    }
     startPath: path.join('/', BASE_DIR, '/'),
     ghostMode: false,
     open: false,
