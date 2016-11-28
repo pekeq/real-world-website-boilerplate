@@ -167,13 +167,13 @@ body(data-page-type="home")
   'home',
   'about',
   'company',
-].forEach(name => dispatcher.on(name, require(`./pages/${name}`).default))
+].forEach(type => dispatcher.on(type, require(`./pages/${name}`).default))
 ```
 
 `src/js/pages/home.js`
 
 ```javascript
-import {$} from './utils.js'
+import {$} from '../utils.js'
 
 export default () => {
   // ここにページ固有の処理を書く
