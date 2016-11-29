@@ -14,7 +14,7 @@ const pug = require('gulp-pug')
 const htmlmin = require('gulp-htmlmin')
 const sass = require('gulp-sass')
 const autoprefixer = require('gulp-autoprefixer')
-const csso = require('gulp-csso')
+const cssnano = require('gulp-cssnano')
 const browserify = require('browserify')
 const watchify = require('watchify')
 const uglify = require('gulp-uglify')
@@ -79,7 +79,7 @@ const css = () => {
     .pipe(sourcemaps.write('.', {sourceRoot: '.'}))
     .pipe(gulp.dest(path.join(tmpDir, 'css')))
     .pipe(server.stream({match: '**/*.css'}))
-    .pipe(gulpif('*.css', csso()))
+    .pipe(gulpif('*.css', cssnano()))
     .pipe(gulpif('*.css', gulp.dest(path.join(destDir, 'css'))))
 }
 
