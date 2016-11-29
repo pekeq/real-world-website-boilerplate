@@ -173,7 +173,7 @@ body(data-page-type="home")
 `src/js/main.js`
 
 ```javascript
-[
+;[
   'home',
   'about',
   'products',
