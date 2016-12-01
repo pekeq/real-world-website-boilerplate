@@ -20,6 +20,7 @@ const watchify = require('watchify')
 const uglify = require('gulp-uglify')
 const concat = require('gulp-concat')
 const imagemin = require('gulp-imagemin')
+const changed = require('gulp-changed')
 
 const BASE_DIR = 'path/to/project'
 
@@ -136,12 +137,14 @@ const enableWatchJs = done => {
 const watchJs = gulp.series(enableWatchJs, js)
 
 const img = () =>
-  gulp.src('src/img/**/*', {since: gulp.lastRun(img)})
+  gulp.src('src/img/**/*')
+    .pipe(changed(path.join(destDir, 'img')))
     .pipe(imagemin())
     .pipe(gulp.dest(path.join(destDir, 'img')))
 
 const copy = () =>
-  gulp.src('src/static/**/*', {since: gulp.lastRun(copy)})
+  gulp.src('src/static/**/*')
+    .pipe(changed(destDir))
     .pipe(gulp.dest(destDir))
 
 const clean = () => del(['.tmp', 'dist'])
@@ -187,7 +190,7 @@ export const serveDist = done => {
 
 const watch = done => {
   gulp.watch('src/html/**/*', html)
-  gulp.watch('src/css/**/*.{scss,css}', css)
+  gulp.watch('src/css/**/*.scss', css)
   gulp.watch('src/img/**/*', img)
   gulp.watch('src/static/**/*', copy)
 
