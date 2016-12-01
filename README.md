@@ -8,19 +8,9 @@
 
 ### サブディレクトリ前提の開発用サーバー設定
 
-`gulpfile.babel.js`の以下の部分を変更することで、開発用サーバーで開かれるページのパスも変更されます。
+サブディレクトリのパスを設定することで、開発用サーバーで開かれるページのURLも変更することができます。加えて、HTMLテンプレートから、サブディレクトリを含めたルートパスを作成できるユーティリティー関数を利用できます。
 
-```javascript
-const BASE_DIR = 'path/to/project'
-```
-
-ルートなら以下のようにします。
-
-```javascript
-const BASE_DIR = ''
-```
-
-加えて、HTMLテンプレートから、サブディレクトリを含めたルートパスを作成できるユーティリティー関数を利用できます。
+設定方法に関しては、[サイトのサブディレクトリの設定](#サイトのサブディレクトリの設定)を参照してください。
 
 ### 共通ヘッダー等の置き場所
 
@@ -99,6 +89,48 @@ git archive --format=zip --prefix=htdocs/ HEAD:dist `git diff --diff-filter=AMCR
 `npm start`と`npm run build`の違いは、ファイルの変更を監視して開発用サーバーを立ち上げるかだけで、生成されるファイルは同じです。`npm start`を実行せずにファイルの変更を行った場合は、`npm run build`を実行して`dist/`以下のファイルを更新してください。
 
 参考：[ビルドの生成物をGitのリポジトリに含めたいときの問題点の改善例 - ライデンの新人ブログ](https://ryden-inc.github.io/rookies/posts/include-build-products-in-git-repository.html)
+
+## Setup
+
+### 依存パッケージのインストール
+
+```bash
+yarn
+```
+
+or
+
+```bash
+npm i
+```
+
+### サイトのサブディレクトリの設定
+
+`gulpfile.babel.js`の以下の部分に、サイトが公開されるサブディレクトリを設定します。
+
+```javascript
+const BASE_DIR = 'path/to/project'
+```
+
+ルートなら以下のようにします。
+
+```javascript
+const BASE_DIR = ''
+```
+
+## Development
+
+以下のコマンドを実行することで、最初にファイルのビルドが行われた上で、開発用サーバーが立ち上がってファイルの変更が監視されるようになります。
+
+```
+npm start
+```
+
+`src/{img,static}`以下のファイルを削除した際には、`dist/`以下にも削除を反映するために、改めて`npm start`か`npm run build`を実行する必要があります。
+
+## Build
+
+`npm start`と生成されるファイルは同じです。開発用サーバーの立ち上げやファイルの監視を行わず、ソースの変更を`dist/`以下に反映したい場合に実行します。
 
 ## Directory structure
 
@@ -193,6 +225,10 @@ export default () => {
 ```
 
 参考：[ページごとにJSの処理を分割するためのよさそうな方法 - ライデンの新人ブログ](https://ryden-inc.github.io/rookies/posts/page-dispatcher.html)
+
+## Deploy to staging
+
+`dist/`及び`vendor_assets/`以下のファイルをサーバーへコピーすることで反映できます。
 
 ## License
 
