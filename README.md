@@ -22,29 +22,19 @@ SSIを利用したい場合は、`gulpfile.babel.js`に以下のように書き�
 const serve = done => {
   server.init({
     // 省略
-    server: {
-      // 省略
-      middleware(req, res, next) {
-        const exp = '.html'
-        const baseDir = '.tmp'
-        const {pathname} = require('url').parse(req.originalUrl || req.url)
-        const filename = path.join(baseDir, pathname.endsWith('/') ? `${pathname}index${exp}` : pathname)
-
-        if (filename.endsWith(exp) && fs.existsSync(filename)) {
-          const regexp = /<!--[ ]*#([a-z]+)([ ]+([a-z]+)="(.+?)")*[ ]*-->/g
-
-          res.end(fs.readFileSync(filename, 'utf8').replace(regexp, (_directive, directiveName, _, __, includeFilePath) => {
-            if (directiveName === 'include') {
-              return fs.readFileSync(path.join('vendor-assets', includeFilePath))
-            } else {
-              throw new Error('Not supported')
-            }
-          }))
-        } else {
-          next()
+    rewriteRules: [
+      {
+        match: /<!--#include virtual="(.+?)" -->/g,
+        fn(req, res, match, filename) {
+          const includeFilePath = path.join('vendor-assets', filename)
+          if (fs.existsSync(includeFilePath)) {
+            return fs.readFileSync(includeFilePath)
+          } else {
+            return `<span style="color: red">\`${includeFilePath}\` could not be found</span>`
+          }
         }
-      },
-    },
+      }
+    ],
     // 省略
   })
 }
