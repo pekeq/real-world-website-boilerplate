@@ -40,6 +40,18 @@ const serve = done => {
 }
 ```
 
+加えて`html`というタスクで利用している、gulp-htmlminの設定の`removeComments`を無効にします。これが有効になっていると、SSIの宣言文を削除してい舞うためです。
+
+```javascript
+.pipe(htmlmin({
+  // SSIの宣言文を削除してしまうので無効化する
+  // removeComments: true,
+  collapseWhitespace: true,
+  collapseBooleanAttributes: true,
+  // 省略
+}))
+```
+
 ### HTML制作環境
 
 全てのテンプレートファイル（`src/html/**/*.pug`）に、ファイルの配置に対応するページのデータとページのURLを提供します。
@@ -72,8 +84,16 @@ const serve = done => {
 
 参考として以下のようなコマンドを利用できますが、多彩な納品形態に対応できないのでこのテンプレートの中にはその仕組みを含めていません。
 
+#### 差分Zip生成コマンドの例
+
 ```bash
-git archive --format=zip --prefix=htdocs/ HEAD:dist `git diff --diff-filter=AMCR --name-only <prev-commit> HEAD | grep "^dist/path/to/project/" | sed -e "s/dist\/path\/to\/project\///"` > ~/Desktop/htdocs.zip
+git archive --format=zip --prefix=htdocs/ HEAD:dist/path/to/project `git diff --diff-filter=AMCR --name-only <prev-commit> HEAD | grep "^dist/path/to/project/" | sed -e "s/dist\/path\/to\/project\///"` > ~/Desktop/htdocs.zip
+```
+
+#### 差分ファイルリスト出力コマンドの例
+
+```bash
+git diff --name-only --diff-filter=AMCR <prev-commit> | grep "^dist/path/to/project/" | sed -e "s/dist\/path\/to\/project\///" > ~/Desktop/filelist.txt
 ```
 
 `npm start`と`npm run build`の違いは、ファイルの変更を監視して開発用サーバーを立ち上げるかだけで、生成されるファイルは同じです。`npm start`を実行せずにファイルの変更を行った場合は、`npm run build`を実行して`dist/`以下のファイルを更新してください。
