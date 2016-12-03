@@ -1,7 +1,7 @@
 const path = require('path')
 const fs = require('fs')
 const del = require('del')
-const browserSync = require('browser-sync')
+const browserSync = require('browser-sync').create()
 const source = require('vinyl-source-stream')
 const buffer = require('vinyl-buffer')
 const gulp = require('gulp')
@@ -27,8 +27,6 @@ const BASE_DIR = 'path/to/project'
 const tmpDir = path.join('.tmp', BASE_DIR)
 const destDir = path.join('dist', BASE_DIR)
 
-const server = browserSync.create()
-
 const html = () =>
   gulp.src([
     'src/html/**/*.pug',
@@ -53,7 +51,7 @@ const html = () =>
     }))
     .pipe(pug())
     .pipe(gulp.dest(tmpDir))
-    .pipe(server.stream())
+    .pipe(browserSync.stream())
     .pipe(htmlmin({
       removeComments: true,
       collapseWhitespace: true,
@@ -79,7 +77,7 @@ const css = () => {
     .pipe(autoprefixer(AUTOPREFIXER_BROWSERS))
     .pipe(sourcemaps.write('.', {sourceRoot: '.'}))
     .pipe(gulp.dest(path.join(tmpDir, 'css')))
-    .pipe(server.stream({match: '**/*.css'}))
+    .pipe(browserSync.stream({match: '**/*.css'}))
     .pipe(gulpif('*.css', cssnano()))
     .pipe(gulpif('*.css', gulp.dest(path.join(destDir, 'css'))))
 }
@@ -102,7 +100,7 @@ const mainJs = () => {
     .pipe(sourcemaps.init({loadMaps: true}))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(path.join(tmpDir, 'js')))
-    .pipe(server.stream({match: '**/*.js'}))
+    .pipe(browserSync.stream({match: '**/*.js'}))
     .pipe(gulpif('*.js', uglify({preserveComments: 'license'})))
     .pipe(gulpif('*.js', gulp.dest(path.join(destDir, 'js'))))
 
@@ -150,7 +148,7 @@ const copy = () =>
 const clean = () => del(['.tmp', 'dist'])
 
 const serve = done => {
-  server.init({
+  browserSync.init({
     notify: false,
     server: {
       baseDir: [
@@ -172,7 +170,7 @@ const serve = done => {
 }
 
 export const serveDist = done => {
-  server.init({
+  browserSync.init({
     notify: false,
     server: {
       baseDir: [
