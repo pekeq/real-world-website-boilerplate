@@ -20,7 +20,7 @@ SSIを利用したい場合は、`gulpfile.babel.js`に以下のように書き�
 
 ```javascript
 const serve = done => {
-  server.init({
+  browserSync.init({
     // 省略
     rewriteRules: [
       {
@@ -37,6 +37,8 @@ const serve = done => {
     ],
     // 省略
   })
+
+  done()
 }
 ```
 
@@ -48,7 +50,12 @@ const serve = done => {
   // removeComments: true,
   collapseWhitespace: true,
   collapseBooleanAttributes: true,
-  // 省略
+  removeAttributeQuotes: true,
+  removeRedundantAttributes: true,
+  removeEmptyAttributes: true,
+  removeScriptTypeAttributes: true,
+  removeStyleLinkTypeAttributes: true,
+  removeOptionalTags: true,
 }))
 ```
 
