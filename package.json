@@ -2,8 +2,7 @@
   "private": true,
   "scripts": {
     "start": "gulp",
-    "build": "gulp build --release",
-    "pre-commit": "npm run build && git add dist/"
+    "pre-commit": "gulp build --release && git add dist/"
   },
   "pre-commit": "pre-commit",
   "dependencies": {

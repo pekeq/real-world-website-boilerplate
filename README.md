@@ -143,11 +143,7 @@ npm start
 
 ## Build
 
-```
-npm run build
-```
-
-上記のコマンドを実行することで、納品用のファイルがビルドされます。このコマンドは、[`pre-commit`](https://github.com/observing/pre-commit)を利用したフックによって**コミットごとに自動的に実行されます**。
+[`pre-commit`](https://github.com/observing/pre-commit)を利用したフックによって、**コミットごとに自動的に納品用のビルドが実行されます**。
 
 ## Directory structure
 
