@@ -45,7 +45,7 @@ const serve = done => {
 加えて`html`というタスクで利用している、gulp-htmlminの設定の`removeComments`を無効にします。これが有効になっていると、SSIの宣言文を削除してい舞うためです。
 
 ```javascript
-.pipe(htmlmin({
+.pipe(gulpif(isRelease, htmlmin({
   // SSIの宣言文を削除してしまうので無効化する
   // removeComments: true,
   collapseWhitespace: true,
@@ -56,7 +56,7 @@ const serve = done => {
   removeScriptTypeAttributes: true,
   removeStyleLinkTypeAttributes: true,
   removeOptionalTags: true,
-}))
+})))
 ```
 
 ### HTML制作環境
@@ -87,7 +87,7 @@ const serve = done => {
 
 ### 納品ファイルの管理
 
-開発用にコンパイルされたファイルは`.tmp/`以下に、納品用のファイルは`dist/`以下に格納されます。`dist/`以下のファイルをGitのコマンドで差分を取れば、差分納品用のZIPが作成できます。
+開発用にコンパイルされたファイルは`.tmp/`以下に、納品用のファイルは`dist/`以下に格納されます。`dist/`以下のファイルをGitのコマンドで差分を取れば、差分納品用のZIPが作成できます。納品用のビルドは、コミットごとに自動的に実行されます。
 
 参考として以下のようなコマンドを利用できますが、多彩な納品形態に対応できないのでこのテンプレートの中にはその仕組みを含めていません。
 
@@ -102,8 +102,6 @@ git archive --format=zip --prefix=htdocs/ HEAD:dist/path/to/project `git diff --
 ```bash
 git diff --name-only --diff-filter=AMCR <prev-commit> | grep "^dist/path/to/project/" | sed -e "s/dist\/path\/to\/project\///" > ~/Desktop/filelist.txt
 ```
-
-`npm start`と`npm run build`の違いは、ファイルの変更を監視して開発用サーバーを立ち上げるかだけで、生成されるファイルは同じです。`npm start`を実行せずにファイルの変更を行った場合は、`npm run build`を実行して`dist/`以下のファイルを更新してください。
 
 参考：[ビルドの生成物をGitのリポジトリに含めたいときの問題点の改善例 - ライデンの新人ブログ](https://ryden-inc.github.io/rookies/posts/include-build-products-in-git-repository.html)
 
@@ -137,17 +135,19 @@ const BASE_DIR = ''
 
 ## Development
 
-以下のコマンドを実行することで、最初にファイルのビルドが行われた上で、開発用サーバーが立ち上がってファイルの変更が監視されるようになります。
-
 ```
 npm start
 ```
 
-`src/{img,static}`以下のファイルを削除した際には、`dist/`以下にも削除を反映するために、改めて`npm start`か`npm run build`を実行する必要があります。
+上記のコマンドを実行することで、開発用サーバーが立ち上がり、ファイルの変更が監視されるようになります。
 
 ## Build
 
-`npm start`と生成されるファイルは同じです。開発用サーバーの立ち上げやファイルの監視を行わず、ソースの変更を`dist/`以下に反映したい場合に実行します。
+```
+npm run build
+```
+
+上記のコマンドを実行することで、納品用のファイルがビルドされます。このコマンドは、[`pre-commit`](https://github.com/observing/pre-commit)を利用したフックによって**コミットごとに自動的に実行されます**。
 
 ## Directory structure
 

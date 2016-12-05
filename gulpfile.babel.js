@@ -24,8 +24,9 @@ const changed = require('gulp-changed')
 
 const BASE_DIR = 'path/to/project'
 
-const tmpDir = path.join('.tmp', BASE_DIR)
-const destDir = path.join('dist', BASE_DIR)
+const isRelease = process.argv.includes('--release')
+const destDir = isRelease ? 'dist' : '.tmp'
+const destBaseDir = path.join(destDir, BASE_DIR)
 
 const html = () =>
   gulp.src([
@@ -50,9 +51,7 @@ const html = () =>
       }
     }))
     .pipe(pug())
-    .pipe(gulp.dest(tmpDir))
-    .pipe(browserSync.stream())
-    .pipe(htmlmin({
+    .pipe(gulpif(isRelease, htmlmin({
       removeComments: true,
       collapseWhitespace: true,
       collapseBooleanAttributes: true,
@@ -62,8 +61,9 @@ const html = () =>
       removeScriptTypeAttributes: true,
       removeStyleLinkTypeAttributes: true,
       removeOptionalTags: true,
-    }))
-    .pipe(gulp.dest(destDir))
+    })))
+    .pipe(gulp.dest(destBaseDir))
+    .pipe(browserSync.stream())
 
 const css = () => {
   const AUTOPREFIXER_BROWSERS = [
@@ -72,14 +72,13 @@ const css = () => {
   ]
 
   return gulp.src('src/css/main.scss')
-    .pipe(sourcemaps.init({loadMaps: true}))
+    .pipe(gulpif(!isRelease, sourcemaps.init({loadMaps: true})))
     .pipe(sass().on('error', sass.logError))
     .pipe(autoprefixer(AUTOPREFIXER_BROWSERS))
-    .pipe(sourcemaps.write('.', {sourceRoot: '.'}))
-    .pipe(gulp.dest(path.join(tmpDir, 'css')))
+    .pipe(gulpif(!isRelease, sourcemaps.write('.')))
+    .pipe(gulpif(isRelease, cssnano()))
+    .pipe(gulp.dest(path.join(destBaseDir, 'css')))
     .pipe(browserSync.stream({match: '**/*.css'}))
-    .pipe(gulpif('*.css', cssnano()))
-    .pipe(gulpif('*.css', gulp.dest(path.join(destDir, 'css'))))
 }
 
 let isWatchifyEnabled = false
@@ -97,12 +96,11 @@ const mainJs = () => {
     .on('error', err => gutil.log('Browserify Error', err))
     .pipe(source('main.js'))
     .pipe(buffer())
-    .pipe(sourcemaps.init({loadMaps: true}))
-    .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest(path.join(tmpDir, 'js')))
+    .pipe(gulpif(!isRelease, sourcemaps.init({loadMaps: true})))
+    .pipe(gulpif(!isRelease, sourcemaps.write('.')))
+    .pipe(gulpif(isRelease, uglify({preserveComments: 'license'})))
+    .pipe(gulp.dest(path.join(destBaseDir, 'js')))
     .pipe(browserSync.stream({match: '**/*.js'}))
-    .pipe(gulpif('*.js', uglify({preserveComments: 'license'})))
-    .pipe(gulpif('*.js', gulp.dest(path.join(destDir, 'js'))))
 
   if (isWatchifyEnabled) {
     const watcher = watchify(bundler)
@@ -120,9 +118,9 @@ const polyfillJs = () => {
 
   return gulp.src(polyfills)
     .pipe(concat('polyfill.js'))
-    .pipe(gulp.dest(path.join(tmpDir, 'js')))
-    .pipe(uglify({preserveComments: 'license'}))
-    .pipe(gulp.dest(path.join(destDir, 'js')))
+    .pipe(gulpif(isRelease, uglify({preserveComments: 'license'})))
+    .pipe(gulp.dest(path.join(destBaseDir, 'js')))
+    .pipe(browserSync.stream())
 }
 
 const js = gulp.parallel(mainJs, polyfillJs)
@@ -136,26 +134,28 @@ const watchJs = gulp.series(enableWatchJs, js)
 
 const img = () =>
   gulp.src('src/img/**/*')
-    .pipe(changed(path.join(destDir, 'img')))
-    .pipe(imagemin())
-    .pipe(gulp.dest(path.join(destDir, 'img')))
+    .pipe(changed(path.join(destBaseDir, 'img')))
+    .pipe(gulpif(isRelease, imagemin()))
+    .pipe(gulpif(isRelease, gulp.dest(path.join(destBaseDir, 'img'))))
+    .pipe(browserSync.stream())
 
 const copy = () =>
   gulp.src('src/static/**/*')
-    .pipe(changed(destDir))
-    .pipe(gulp.dest(destDir))
+    .pipe(changed(destBaseDir))
+    .pipe(gulpif(isRelease, gulp.dest(destBaseDir)))
+    .pipe(browserSync.stream())
 
-const clean = () => del(['.tmp', 'dist'])
+const clean = () => del(destDir)
 
 const serve = done => {
   browserSync.init({
     notify: false,
     server: {
       baseDir: [
-        '.tmp',
+        destDir,
         'vendor-assets',
       ],
-      routes: {
+      routes: isRelease ? {} : {
         [`${path.join('/', BASE_DIR)}`]: 'src/static',
         [`${path.join('/', BASE_DIR, 'img')}`]: 'src/img',
       },
@@ -164,23 +164,6 @@ const serve = done => {
     ghostMode: false,
     open: false,
     reloadDebounce: 300,
-  })
-
-  done()
-}
-
-export const serveDist = done => {
-  browserSync.init({
-    notify: false,
-    server: {
-      baseDir: [
-        'dist',
-        'vendor-assets',
-      ],
-    },
-    startPath: path.join('/', BASE_DIR, '/'),
-    ghostMode: false,
-    open: false,
   })
 
   done()
@@ -199,10 +182,10 @@ export default gulp.series(
   clean,
   gulp.parallel(html, css, watchJs, img, copy),
   serve,
-  watch
+  watch,
 )
 
 export const build = gulp.series(
   clean,
-  gulp.parallel(html, css, js, img, copy)
+  gulp.parallel(html, css, js, img, copy),
 )
