@@ -121,16 +121,20 @@ npm i
 
 ### サイトのサブディレクトリの設定
 
-`gulpfile.babel.js`の以下の部分に、サイトが公開されるサブディレクトリを設定します。
+`config.json`の`baseDir`に、サイトが公開されるサブディレクトリを設定します。
 
-```javascript
-const BASE_DIR = 'path/to/project'
+```json
+{
+  "baseDir": "path/to/project"
+}
 ```
 
 ルートなら以下のようにします。
 
-```javascript
-const BASE_DIR = ''
+```json
+{
+  "baseDir": ""
+}
 ```
 
 ## Development
@@ -143,7 +147,7 @@ npm start
 
 ## Build
 
-[`pre-commit`](https://github.com/observing/pre-commit)を利用したフックによって、**コミットごとに自動的に納品用のビルドが実行されます**。
+pre-commit(https://github.com/observing/pre-commit)を利用したフックによって、**コミットごとに自動的に納品用のビルドが実行されます**。
 
 ## Directory structure
 
@@ -201,13 +205,15 @@ npm start
 
 Browserifyでモジュールシステムをシンプルに利用するために、全てのページで一枚のJavaScriptを読み込んで実行するという形にしています。そのため、ページごとに実行するJavaScriptの処理を切り分けるために、このテンプレートでは[PageDispatcher](https://github.com/yuheiy/page-dispatcher)を利用しています。
 
-`src/js/main.js`に、以下のように記述した上で、HTMLテンプレート側には以下のように記述します。
+`src/js/main.js`には以下のように記述します。
 
 ```javascript
 dispatcher.on('home', () => {
   console.log('home')
 })
 ```
+
+HTMLテンプレート側には以下のように記述します。
 
 ```pug
 body(data-page-type="home")

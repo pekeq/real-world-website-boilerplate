@@ -1,0 +1,10 @@
+{
+  "baseDir": "path/to/project",
+  "autoprefixerBrowsers": [
+    "last 1 version",
+    "> 5% in JP"
+  ],
+  "polyfillScripts": [
+    "node_modules/picturefill/dist/picturefill.js"
+  ]
+}

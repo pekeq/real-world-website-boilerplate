@@ -21,12 +21,11 @@ const uglify = require('gulp-uglify')
 const concat = require('gulp-concat')
 const imagemin = require('gulp-imagemin')
 const changed = require('gulp-changed')
-
-const BASE_DIR = 'path/to/project'
+const config = require('./config.json')
 
 const isRelease = process.argv.includes('--release')
 const destDir = isRelease ? 'dist' : '.tmp'
-const destBaseDir = path.join(destDir, BASE_DIR)
+const destBaseDir = path.join(destDir, config.baseDir)
 
 const html = () =>
   gulp.src([
@@ -41,7 +40,7 @@ const html = () =>
       const pagePathFromBaseDir = '/' + path.relative('src/html', file.path)
         .replace(/\.pug$/, '.html')
         .replace(/\/?index\.html$/, '')
-      const buildPagePath = pagePath => path.join('/', BASE_DIR, pagePath)
+      const buildPagePath = pagePath => path.join('/', config.baseDir, pagePath)
 
       return {
         ...metaData,
@@ -65,21 +64,15 @@ const html = () =>
     .pipe(gulp.dest(destBaseDir))
     .pipe(browserSync.stream())
 
-const css = () => {
-  const AUTOPREFIXER_BROWSERS = [
-    'last 1 version',
-    '> 5% in JP',
-  ]
-
-  return gulp.src('src/css/main.scss')
+const css = () =>
+  gulp.src('src/css/main.scss')
     .pipe(gulpif(!isRelease, sourcemaps.init({loadMaps: true})))
     .pipe(sass().on('error', sass.logError))
-    .pipe(autoprefixer(AUTOPREFIXER_BROWSERS))
+    .pipe(autoprefixer(config.autoprefixerBrowsers))
     .pipe(gulpif(!isRelease, sourcemaps.write('.')))
     .pipe(gulpif(isRelease, cssnano()))
     .pipe(gulp.dest(path.join(destBaseDir, 'css')))
     .pipe(browserSync.stream({match: '**/*.css'}))
-}
 
 let isWatchifyEnabled = false
 
@@ -111,17 +104,12 @@ const mainJs = () => {
   return bundle()
 }
 
-const polyfillJs = () => {
-  const polyfills = [
-    'node_modules/picturefill/dist/picturefill.js',
-  ]
-
-  return gulp.src(polyfills)
+const polyfillJs = () =>
+  gulp.src(config.polyfillScripts)
     .pipe(concat('polyfill.js'))
     .pipe(gulpif(isRelease, uglify({preserveComments: 'license'})))
     .pipe(gulp.dest(path.join(destBaseDir, 'js')))
     .pipe(browserSync.stream())
-}
 
 const js = gulp.parallel(mainJs, polyfillJs)
 
@@ -156,11 +144,11 @@ const serve = done => {
         'vendor-assets',
       ],
       routes: isRelease ? {} : {
-        [`${path.join('/', BASE_DIR)}`]: 'src/static',
-        [`${path.join('/', BASE_DIR, 'img')}`]: 'src/img',
+        [`${path.join('/', config.baseDir)}`]: 'src/static',
+        [`${path.join('/', config.baseDir, 'img')}`]: 'src/img',
       },
     },
-    startPath: path.join('/', BASE_DIR, '/'),
+    startPath: path.join('/', config.baseDir, '/'),
     ghostMode: false,
     open: false,
     reloadDebounce: 300,
