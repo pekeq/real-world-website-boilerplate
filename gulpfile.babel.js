@@ -2,45 +2,33 @@ const path = require('path')
 const fs = require('fs')
 const del = require('del')
 const browserSync = require('browser-sync').create()
+const browserify = require('browserify')
+const watchify = require('watchify')
 const source = require('vinyl-source-stream')
 const buffer = require('vinyl-buffer')
 const gulp = require('gulp')
-const gutil = require('gulp-util')
-const gulpif = require('gulp-if')
-const plumber = require('gulp-plumber')
-const sourcemaps = require('gulp-sourcemaps')
-const data = require('gulp-data')
-const pug = require('gulp-pug')
-const htmlmin = require('gulp-htmlmin')
-const sass = require('gulp-sass')
-const autoprefixer = require('gulp-autoprefixer')
-const cssnano = require('gulp-cssnano')
-const browserify = require('browserify')
-const watchify = require('watchify')
-const uglify = require('gulp-uglify')
-const concat = require('gulp-concat')
-const imagemin = require('gulp-imagemin')
-const changed = require('gulp-changed')
-const config = require('./config.json')
+const plugins = require('gulp-load-plugins')()
+
+const BASE_DIR = 'path/to/project'
 
 const isRelease = process.argv.includes('--release')
 const destDir = isRelease ? 'dist' : '.tmp'
-const destBaseDir = path.join(destDir, config.baseDir)
+const destBaseDir = path.join(destDir, BASE_DIR)
 
 const html = () =>
   gulp.src([
     'src/html/**/*.pug',
     '!src/html/partial/**/*',
   ])
-    .pipe(plumber())
-    .pipe(data(file => {
+    .pipe(plugins.plumber())
+    .pipe(plugins.data(file => {
       const metaData = JSON.parse(fs.readFileSync('src/html/metadata.json', 'utf8'))
       const pageDataPath = file.path.replace(/\.pug$/, '.json')
       const pageData = fs.existsSync(pageDataPath) ? JSON.parse(fs.readFileSync(pageDataPath)) : null
       const pagePathFromBaseDir = '/' + path.relative('src/html', file.path)
         .replace(/\.pug$/, '.html')
         .replace(/\/?index\.html$/, '')
-      const buildPagePath = pagePath => path.join('/', config.baseDir, pagePath)
+      const buildPagePath = pagePath => path.join('/', BASE_DIR, pagePath)
 
       return {
         ...metaData,
@@ -49,8 +37,8 @@ const html = () =>
         urlFor: buildPagePath,
       }
     }))
-    .pipe(pug())
-    .pipe(gulpif(isRelease, htmlmin({
+    .pipe(plugins.pug())
+    .pipe(plugins.if(isRelease, plugins.htmlmin({
       removeComments: true,
       collapseWhitespace: true,
       collapseBooleanAttributes: true,
@@ -71,11 +59,11 @@ const css = () => {
   ]
 
   return gulp.src('src/css/main.scss')
-    .pipe(gulpif(!isRelease, sourcemaps.init({loadMaps: true})))
-    .pipe(sass().on('error', sass.logError))
-    .pipe(autoprefixer(AUTOPREXIER_BROWSERS))
-    .pipe(gulpif(!isRelease, sourcemaps.write('.')))
-    .pipe(gulpif(isRelease, cssnano()))
+    .pipe(plugins.if(!isRelease, plugins.sourcemaps.init({loadMaps: true})))
+    .pipe(plugins.sass().on('error', plugins.sass.logError))
+    .pipe(plugins.autoprefixer(AUTOPREXIER_BROWSERS))
+    .pipe(plugins.if(!isRelease, plugins.sourcemaps.write('.')))
+    .pipe(plugins.if(isRelease, plugins.cssnano()))
     .pipe(gulp.dest(path.join(destBaseDir, 'css')))
     .pipe(browserSync.stream({match: '**/*.css'}))
 }
@@ -92,19 +80,19 @@ const mainJs = () => {
 
   const bundle = () => bundler
     .bundle()
-    .on('error', err => gutil.log('Browserify Error', err))
+    .on('error', err => plugins.util.log('Browserify Error', err))
     .pipe(source('main.js'))
     .pipe(buffer())
-    .pipe(gulpif(!isRelease, sourcemaps.init({loadMaps: true})))
-    .pipe(gulpif(!isRelease, sourcemaps.write('.')))
-    .pipe(gulpif(isRelease, uglify({preserveComments: 'license'})))
+    .pipe(plugins.if(!isRelease, plugins.sourcemaps.init({loadMaps: true})))
+    .pipe(plugins.if(!isRelease, plugins.sourcemaps.write('.')))
+    .pipe(plugins.if(isRelease, plugins.uglify({preserveComments: 'license'})))
     .pipe(gulp.dest(path.join(destBaseDir, 'js')))
     .pipe(browserSync.stream({match: '**/*.js'}))
 
   if (isWatchifyEnabled) {
     const watcher = watchify(bundler)
     watcher.on('update', bundle)
-    watcher.on('log', gutil.log)
+    watcher.on('log', plugins.util.log)
   }
 
   return bundle()
@@ -116,8 +104,8 @@ const polyfillJs = () => {
   ]
 
   return gulp.src(POLYFILLS)
-    .pipe(concat('polyfill.js'))
-    .pipe(gulpif(isRelease, uglify({preserveComments: 'license'})))
+    .pipe(plugins.concat('polyfill.js'))
+    .pipe(plugins.if(isRelease, plugins.uglify({preserveComments: 'license'})))
     .pipe(gulp.dest(path.join(destBaseDir, 'js')))
     .pipe(browserSync.stream())
 }
@@ -133,15 +121,15 @@ const watchJs = gulp.series(enableWatchJs, js)
 
 const img = () =>
   gulp.src('src/img/**/*')
-    .pipe(changed(path.join(destBaseDir, 'img')))
-    .pipe(gulpif(isRelease, imagemin()))
-    .pipe(gulpif(isRelease, gulp.dest(path.join(destBaseDir, 'img'))))
+    .pipe(plugins.changed(path.join(destBaseDir, 'img')))
+    .pipe(plugins.if(isRelease, plugins.imagemin()))
+    .pipe(plugins.if(isRelease, gulp.dest(path.join(destBaseDir, 'img'))))
     .pipe(browserSync.stream())
 
 const copy = () =>
   gulp.src('src/static/**/*')
-    .pipe(changed(destBaseDir))
-    .pipe(gulpif(isRelease, gulp.dest(destBaseDir)))
+    .pipe(plugins.changed(destBaseDir))
+    .pipe(plugins.if(isRelease, gulp.dest(destBaseDir)))
     .pipe(browserSync.stream())
 
 const clean = () => del(destDir)
@@ -155,11 +143,11 @@ const serve = done => {
         'vendor-assets',
       ],
       routes: isRelease ? {} : {
-        [`${path.join('/', config.baseDir)}`]: 'src/static',
-        [`${path.join('/', config.baseDir, 'img')}`]: 'src/img',
+        [`${path.join('/', BASE_DIR)}`]: 'src/static',
+        [`${path.join('/', BASE_DIR, 'img')}`]: 'src/img',
       },
     },
-    startPath: path.join('/', config.baseDir, '/'),
+    startPath: path.join('/', BASE_DIR, '/'),
     ghostMode: false,
     open: false,
     reloadDebounce: 300,
@@ -188,3 +176,9 @@ export const build = gulp.series(
   clean,
   gulp.parallel(html, css, js, img, copy),
 )
+
+export const archive = done => {
+  throw new Error('Not implemented yet')
+
+  done()
+}

@@ -45,7 +45,7 @@ const serve = done => {
 加えて`html`というタスクで利用している、gulp-htmlminの設定の`removeComments`を無効にします。これが有効になっていると、SSIの宣言文を削除してい舞うためです。
 
 ```javascript
-.pipe(gulpif(isRelease, htmlmin({
+.pipe(plugins.if(isRelease, plugins.htmlmin({
   // SSIの宣言文を削除してしまうので無効化する
   // removeComments: true,
   collapseWhitespace: true,
@@ -121,20 +121,16 @@ npm i
 
 ### サイトのサブディレクトリの設定
 
-`config.json`の`baseDir`に、サイトが公開されるサブディレクトリを設定します。
+`gulpfile.babel.js`の`BASE_DIR`に、サイトが公開されるサブディレクトリを設定します。
 
-```json
-{
-  "baseDir": "path/to/project"
-}
+```js
+const BASE_DIR = 'path/to/project'
 ```
 
 ルートなら以下のようにします。
 
-```json
-{
-  "baseDir": ""
-}
+```js
+const BASE_DIR = ''
 ```
 
 ## Development
