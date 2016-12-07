@@ -64,15 +64,21 @@ const html = () =>
     .pipe(gulp.dest(destBaseDir))
     .pipe(browserSync.stream())
 
-const css = () =>
-  gulp.src('src/css/main.scss')
+const css = () => {
+  const AUTOPREXIER_BROWSERS = [
+    'last 1 version',
+    '> 5% in JP',
+  ]
+
+  return gulp.src('src/css/main.scss')
     .pipe(gulpif(!isRelease, sourcemaps.init({loadMaps: true})))
     .pipe(sass().on('error', sass.logError))
-    .pipe(autoprefixer(config.autoprefixerBrowsers))
+    .pipe(autoprefixer(AUTOPREXIER_BROWSERS))
     .pipe(gulpif(!isRelease, sourcemaps.write('.')))
     .pipe(gulpif(isRelease, cssnano()))
     .pipe(gulp.dest(path.join(destBaseDir, 'css')))
     .pipe(browserSync.stream({match: '**/*.css'}))
+}
 
 let isWatchifyEnabled = false
 
@@ -104,12 +110,17 @@ const mainJs = () => {
   return bundle()
 }
 
-const polyfillJs = () =>
-  gulp.src(config.polyfillScripts)
+const polyfillJs = () => {
+  const POLYFILLS = [
+    'node_modules/picturefill/dist/picturefill.js',
+  ]
+
+  return gulp.src(POLYFILLS)
     .pipe(concat('polyfill.js'))
     .pipe(gulpif(isRelease, uglify({preserveComments: 'license'})))
     .pipe(gulp.dest(path.join(destBaseDir, 'js')))
     .pipe(browserSync.stream())
+}
 
 const js = gulp.parallel(mainJs, polyfillJs)
 
