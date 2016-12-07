@@ -1,5 +1,7 @@
 const path = require('path')
 const fs = require('fs')
+const childProcess = require('child_process')
+const mkdirp = require('mkdirp')
 const del = require('del')
 const browserSync = require('browser-sync').create()
 const browserify = require('browserify')
@@ -8,6 +10,8 @@ const source = require('vinyl-source-stream')
 const buffer = require('vinyl-buffer')
 const gulp = require('gulp')
 const plugins = require('gulp-load-plugins')()
+const archiver = require('archiver')
+const minimist = require('minimist')
 
 const BASE_DIR = 'path/to/project'
 
@@ -178,7 +182,41 @@ export const build = gulp.series(
 )
 
 export const archive = done => {
-  throw new Error('Not implemented yet')
+  const git = (...args) => childProcess.execFileSync('git', [...args])
+  const {commit} = minimist(process.argv.slice(2))
+  const oldCommit = Array.isArray(commit) ? commit[0] : commit
+  const newCommit = Array.isArray(commit) ? commit[1] : 'HEAD'
+  const archiveName = path.resolve('archive', `htdocs.zip`)
+  const zip = archiver('zip')
+  const prefix = path.join('dist', BASE_DIR, '/')
+  const changedFiles = String(git('diff', '--diff-filter=AMCR', '--name-only', oldCommit, newCommit))
+    .slice(0, -1)
+    .split('\n')
+    .filter(file => file.startsWith(prefix))
+  const output = fs.createWriteStream(archiveName)
 
-  done()
+  mkdirp.sync('archive')
+
+  zip.on('error', err => {
+    done()
+    throw err
+  })
+
+  output.on('close', () => {
+    console.log(`${zip.pointer()} total bytes`)
+    console.log('archiver has been finalized and the output file descriptor has closed.')
+    done()
+  })
+
+  zip.pipe(output)
+
+  changedFiles.forEach(file => {
+    const filePath = path.resolve(file)
+    zip.append(fs.createReadStream(filePath), {
+      name: file.slice(prefix.length),
+      mode: fs.statSync(filePath).mode,
+    })
+  })
+
+  zip.finalize()
 }
