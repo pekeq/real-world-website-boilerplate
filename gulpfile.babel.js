@@ -141,6 +141,7 @@ const clean = () => del(destDir)
 const serve = done => {
   browserSync.init({
     notify: false,
+    ui: false,
     server: {
       baseDir: [
         destDir,
@@ -155,9 +156,7 @@ const serve = done => {
     ghostMode: false,
     open: false,
     reloadDebounce: 300,
-  })
-
-  done()
+  }, done)
 }
 
 const watch = done => {

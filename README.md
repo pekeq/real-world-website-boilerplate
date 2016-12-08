@@ -36,9 +36,7 @@ const serve = done => {
       }
     ],
     // 省略
-  })
-
-  done()
+  }, done)
 }
 ```
 
