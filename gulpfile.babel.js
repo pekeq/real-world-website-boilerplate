@@ -83,7 +83,6 @@ const js = () => {
   const ENTRY_FILES = [
     'node_modules/picturefill/dist/picturefill.js',
   ]
-  const entryFilesStream = gulp.src(ENTRY_FILES)
 
   const bundler = browserify('src/js/index.js', {
     ...watchify.args,
@@ -93,7 +92,7 @@ const js = () => {
     .plugin('licensify')
 
   const bundle = () => mergeStream(
-    entryFilesStream,
+    gulp.src(ENTRY_FILES),
     bundler
       .bundle()
       .on('error', err => plugins.util.log('Browserify Error', err))
@@ -105,7 +104,7 @@ const js = () => {
     .pipe(plugins.if(isRelease, plugins.uglify({preserveComments: 'license'})))
     .pipe(plugins.if(!isRelease, plugins.sourcemaps.write('.')))
     .pipe(gulp.dest(path.join(destBaseDir, 'js')))
-    .pipe(browserSync.stream({match: '**/*.js'}))
+    .pipe(browserSync.stream())
 
   if (isWatchifyEnabled) {
     const watcher = watchify(bundler)
