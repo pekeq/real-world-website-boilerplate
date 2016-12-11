@@ -11,7 +11,7 @@
  * babel-runtime:
  *   license: MIT (http://opensource.org/licenses/MIT)
  *   author: Sebastian McKenzie <sebmck@gmail.com>
- *   version: 6.18.0
+ *   version: 6.20.0
  *
  * core-js:
  *   license: MIT (http://opensource.org/licenses/MIT)

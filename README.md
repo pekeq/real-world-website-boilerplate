@@ -44,8 +44,10 @@ const serve = done => {
 
 ```javascript
 .pipe(plugins.if(isRelease, plugins.htmlmin({
+
   // SSIの宣言文を削除してしまうので無効化する
   // removeComments: true,
+
   collapseWhitespace: true,
   collapseBooleanAttributes: true,
   removeAttributeQuotes: true,
@@ -232,13 +234,12 @@ body(data-page-type="home")
 `src/js/main.js`
 
 ```javascript
-;[
-  'home',
-  'about',
-  'products',
-  'products/foods',
-  'products/drink',
-].forEach(type => dispatcher.on(type, require(`./pages/${type}`).default))
+// 静的に`require`しないとbrowserifyで依存関係を解決できない
+dispatcher.on('home', require('./pages/home').default)
+dispatcher.on('about', require('./pages/about').default)
+dispatcher.on('products', require('./pages/products').default)
+dispatcher.on('products/foods', require('./pages/products/foods').default)
+dispatcher.on('products/drink', require('./pages/products/drink').default)
 ```
 
 `src/js/pages/home.js`
