@@ -93,12 +93,10 @@ const js = () => {
       .bundle()
       .on('error', err => plugins.util.log('Browserify Error', err))
       .pipe(source('app.js'))
-      .pipe(buffer())
-      .pipe(plugins.if(!isRelease, plugins.sourcemaps.init({loadMaps: true}))),
-
-    gulp.src(ENTRY_FILES)
-      .pipe(plugins.if(!isRelease, plugins.sourcemaps.init())),
+      .pipe(buffer()),
+    gulp.src(ENTRY_FILES),
   )
+    .pipe(plugins.if(!isRelease, plugins.sourcemaps.init({loadMaps: true})))
     .pipe(plugins.concat('app.js'))
     .pipe(plugins.if(!isRelease, plugins.sourcemaps.write('.')))
     .pipe(plugins.if(isRelease, plugins.uglify({preserveComments: 'license'})))
