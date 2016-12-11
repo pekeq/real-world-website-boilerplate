@@ -8,6 +8,7 @@ const browserify = require('browserify')
 const watchify = require('watchify')
 const source = require('vinyl-source-stream')
 const buffer = require('vinyl-buffer')
+const mergeStream = require('merge-stream')
 const gulp = require('gulp')
 const plugins = require('gulp-load-plugins')()
 const archiver = require('archiver')
@@ -62,7 +63,8 @@ const css = () => {
     '> 5% in JP',
   ]
 
-  return gulp.src('src/css/main.scss')
+  return gulp.src('src/css/index.scss')
+    .pipe(plugins.rename({basename: 'app'}))
     .pipe(plugins.if(!isRelease, plugins.sourcemaps.init({loadMaps: true})))
     .pipe(plugins.sass().on('error', plugins.sass.logError))
     .pipe(plugins.autoprefixer(AUTOPREXIER_BROWSERS))
@@ -74,20 +76,30 @@ const css = () => {
 
 let isWatchifyEnabled = false
 
-const mainJs = () => {
-  const bundler = browserify('src/js/main.js', {
+const js = () => {
+  const ENTRY_FILES = [
+    'node_modules/picturefill/dist/picturefill.js',
+  ]
+
+  const bundler = browserify('src/js/index.js', {
     ...watchify.args,
     debug: true,
   })
     .transform('babelify')
     .plugin('licensify')
 
-  const bundle = () => bundler
-    .bundle()
-    .on('error', err => plugins.util.log('Browserify Error', err))
-    .pipe(source('main.js'))
-    .pipe(buffer())
-    .pipe(plugins.if(!isRelease, plugins.sourcemaps.init({loadMaps: true})))
+  const bundle = () => mergeStream(
+    bundler
+      .bundle()
+      .on('error', err => plugins.util.log('Browserify Error', err))
+      .pipe(source('app.js'))
+      .pipe(buffer())
+      .pipe(plugins.if(!isRelease, plugins.sourcemaps.init({loadMaps: true}))),
+
+    gulp.src(ENTRY_FILES)
+      .pipe(plugins.if(!isRelease, plugins.sourcemaps.init())),
+  )
+    .pipe(plugins.concat('app.js'))
     .pipe(plugins.if(!isRelease, plugins.sourcemaps.write('.')))
     .pipe(plugins.if(isRelease, plugins.uglify({preserveComments: 'license'})))
     .pipe(gulp.dest(path.join(destBaseDir, 'js')))
@@ -101,20 +113,6 @@ const mainJs = () => {
 
   return bundle()
 }
-
-const polyfillJs = () => {
-  const POLYFILLS = [
-    'node_modules/picturefill/dist/picturefill.js',
-  ]
-
-  return gulp.src(POLYFILLS)
-    .pipe(plugins.concat('polyfill.js'))
-    .pipe(plugins.if(isRelease, plugins.uglify({preserveComments: 'license'})))
-    .pipe(gulp.dest(path.join(destBaseDir, 'js')))
-    .pipe(browserSync.stream())
-}
-
-const js = gulp.parallel(mainJs, polyfillJs)
 
 const enableWatchJs = done => {
   isWatchifyEnabled = true
