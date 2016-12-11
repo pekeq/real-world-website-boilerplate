@@ -83,6 +83,7 @@ const js = () => {
   const ENTRY_FILES = [
     'node_modules/picturefill/dist/picturefill.js',
   ]
+  const entryFilesStream = gulp.src(ENTRY_FILES)
 
   const bundler = browserify('src/js/index.js', {
     ...watchify.args,
@@ -92,12 +93,12 @@ const js = () => {
     .plugin('licensify')
 
   const bundle = () => mergeStream(
+    entryFilesStream,
     bundler
       .bundle()
       .on('error', err => plugins.util.log('Browserify Error', err))
       .pipe(source('index.js'))
       .pipe(buffer()),
-    gulp.src(ENTRY_FILES),
   )
     .pipe(plugins.if(!isRelease, plugins.sourcemaps.init({loadMaps: true})))
     .pipe(plugins.concat('app.js'))
