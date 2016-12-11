@@ -157,7 +157,7 @@ npm start
 
 ## Build
 
-pre-commit(https://github.com/observing/pre-commit)を利用したフックによって、**コミットごとに自動的に納品用のビルドが実行されます**。
+[pre-commit](https://github.com/observing/pre-commit)を利用したフックによって、**コミットごとに自動的に納品用のビルドが実行されます**。
 
 ## Directory structure
 
@@ -170,11 +170,10 @@ pre-commit(https://github.com/observing/pre-commit)を利用したフックに�
 │           └── project
 │               ├── about.html
 │               ├── css
-│               │   └── main.css
+│               │   └── app.css
 │               ├── index.html
 │               └── js
-│                   ├── main.js
-│                   └── polyfill.js
+│                   └── app.js
 ├── gulpfile.babel.js
 ├── package.json
 ├── src
@@ -182,7 +181,7 @@ pre-commit(https://github.com/observing/pre-commit)を利用したフックに�
 │   │   ├── _base.scss
 │   │   ├── _function.scss
 │   │   ├── _var.scss
-│   │   └── main.scss
+│   │   └── index.scss
 │   ├── html
 │   │   ├── about.json
 │   │   ├── about.pug
@@ -195,12 +194,13 @@ pre-commit(https://github.com/observing/pre-commit)を利用したフックに�
 │   │       └── scripts.pug
 │   ├── img
 │   ├── js
-│   │   ├── main.js
+│   │   ├── index.js
 │   │   ├── utils.js
 │   │   └── velocity-easings.js
 │   └── static
-├── vendor-assets
-└── yarn.lock
+└── vendor-assets
+
+14 directories, 22 files
 ```
 
 ## Recommended CSS design
