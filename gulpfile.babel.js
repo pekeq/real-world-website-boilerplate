@@ -1,6 +1,6 @@
 const path = require('path')
 const fs = require('fs')
-const childProcess = require('child_process')
+const cp = require('child_process')
 const mkdirp = require('mkdirp')
 const del = require('del')
 const browserSync = require('browser-sync').create()
@@ -64,12 +64,15 @@ const css = () => {
   ]
 
   return gulp.src('src/css/index.scss')
-    .pipe(plugins.rename({basename: 'app'}))
     .pipe(plugins.if(!isRelease, plugins.sourcemaps.init({loadMaps: true})))
     .pipe(plugins.sass().on('error', plugins.sass.logError))
-    .pipe(plugins.autoprefixer(AUTOPREXIER_BROWSERS))
+    .pipe(plugins.autoprefixer({
+      browsers: AUTOPREXIER_BROWSERS,
+      cascade: false,
+    }))
     .pipe(plugins.if(!isRelease, plugins.sourcemaps.write('.')))
     .pipe(plugins.if(isRelease, plugins.cssnano()))
+    .pipe(plugins.rename({basename: 'app'}))
     .pipe(gulp.dest(path.join(destBaseDir, 'css')))
     .pipe(browserSync.stream({match: '**/*.css'}))
 }
@@ -92,14 +95,14 @@ const js = () => {
     bundler
       .bundle()
       .on('error', err => plugins.util.log('Browserify Error', err))
-      .pipe(source('app.js'))
+      .pipe(source('index.js'))
       .pipe(buffer()),
     gulp.src(ENTRY_FILES),
   )
     .pipe(plugins.if(!isRelease, plugins.sourcemaps.init({loadMaps: true})))
     .pipe(plugins.concat('app.js'))
-    .pipe(plugins.if(!isRelease, plugins.sourcemaps.write('.')))
     .pipe(plugins.if(isRelease, plugins.uglify({preserveComments: 'license'})))
+    .pipe(plugins.if(!isRelease, plugins.sourcemaps.write('.')))
     .pipe(gulp.dest(path.join(destBaseDir, 'js')))
     .pipe(browserSync.stream({match: '**/*.js'}))
 
@@ -177,7 +180,7 @@ export const build = gulp.series(
 )
 
 export const archive = done => {
-  const git = (...args) => childProcess.execFileSync('git', [...args])
+  const git = (...args) => cp.execFileSync('git', [...args])
   const {commit} = minimist(process.argv.slice(2))
   const oldCommit = Array.isArray(commit) ? commit[0] : commit
   const newCommit = Array.isArray(commit) ? commit[1] : 'HEAD'
