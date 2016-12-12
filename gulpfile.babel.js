@@ -83,6 +83,9 @@ const js = () => {
   const ENTRY_FILES = [
     'node_modules/picturefill/dist/picturefill.js',
   ]
+  const concatedScripts = ENTRY_FILES.map(file => fs.readFileSync(file, 'utf8'))
+    .concat('')
+    .join('\n')
 
   const bundler = browserify('src/js/index.js', {
     ...watchify.args,
@@ -91,16 +94,13 @@ const js = () => {
     .transform('babelify')
     .plugin('licensify')
 
-  const bundle = () => mergeStream(
-    gulp.src(ENTRY_FILES),
-    bundler
-      .bundle()
-      .on('error', err => plugins.util.log('Browserify Error', err))
-      .pipe(source('index.js'))
-      .pipe(buffer()),
-  )
+  const bundle = () => bundler
+    .bundle()
+    .on('error', err => plugins.util.log('Browserify Error', err))
+    .pipe(source('app.js'))
+    .pipe(buffer())
     .pipe(plugins.if(!isRelease, plugins.sourcemaps.init({loadMaps: true})))
-    .pipe(plugins.concat('app.js'))
+    .pipe(plugins.header(concatedScripts))
     .pipe(plugins.if(isRelease, plugins.uglify({preserveComments: 'license'})))
     .pipe(plugins.if(!isRelease, plugins.sourcemaps.write('.')))
     .pipe(gulp.dest(path.join(destBaseDir, 'js')))
