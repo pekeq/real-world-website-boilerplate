@@ -42,7 +42,6 @@
     "gulp-uglify": "^2.0.0",
     "gulp-util": "^3.0.7",
     "licensify": "^3.1.2",
-    "merge-stream": "^1.0.1",
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
     "pre-commit": "^1.1.3",
