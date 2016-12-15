@@ -1,18 +1,8 @@
 const path = require('path')
 const fs = require('fs')
-const cp = require('child_process')
-const mkdirp = require('mkdirp')
-const del = require('del')
 const browserSync = require('browser-sync').create()
-const browserify = require('browserify')
-const watchify = require('watchify')
-const source = require('vinyl-source-stream')
-const buffer = require('vinyl-buffer')
-const mergeStream = require('merge-stream')
 const gulp = require('gulp')
 const plugins = require('gulp-load-plugins')()
-const archiver = require('archiver')
-const minimist = require('minimist')
 
 const BASE_DIR = 'path/to/project'
 
@@ -64,15 +54,15 @@ const css = () => {
   ]
 
   return gulp.src('src/css/index.scss')
-    .pipe(plugins.if(!isRelease, plugins.sourcemaps.init({loadMaps: true})))
+    .pipe(plugins.if(!isRelease, plugins.sourcemaps.init()))
+    .pipe(plugins.rename({basename: 'app'}))
     .pipe(plugins.sass().on('error', plugins.sass.logError))
     .pipe(plugins.autoprefixer({
       browsers: AUTOPREXIER_BROWSERS,
       cascade: false,
     }))
-    .pipe(plugins.if(!isRelease, plugins.sourcemaps.write('.')))
     .pipe(plugins.if(isRelease, plugins.cssnano()))
-    .pipe(plugins.rename({basename: 'app'}))
+    .pipe(plugins.if(!isRelease, plugins.sourcemaps.write('.')))
     .pipe(gulp.dest(path.join(destBaseDir, 'css')))
     .pipe(browserSync.stream({match: '**/*.css'}))
 }
@@ -80,6 +70,11 @@ const css = () => {
 let isWatchifyEnabled = false
 
 const js = () => {
+  const browserify = require('browserify')
+  const watchify = require('watchify')
+  const source = require('vinyl-source-stream')
+  const buffer = require('vinyl-buffer')
+
   const ENTRY_FILES = [
     'node_modules/picturefill/dist/picturefill.js',
   ]
@@ -135,7 +130,10 @@ const copy = () =>
     .pipe(plugins.if(isRelease, gulp.dest(destBaseDir)))
     .pipe(browserSync.stream())
 
-const clean = () => del(destDir)
+const clean = () => {
+  const del = require('del')
+  return del(destDir)
+}
 
 const serve = done => {
   browserSync.init({
@@ -180,6 +178,11 @@ export const build = gulp.series(
 )
 
 export const archive = done => {
+  const cp = require('child_process')
+  const mkdirp = require('mkdirp')
+  const archiver = require('archiver')
+  const minimist = require('minimist')
+
   const git = (...args) => cp.execFileSync('git', [...args])
   const {commit} = minimist(process.argv.slice(2))
   const oldCommit = Array.isArray(commit) ? commit[0] : commit
