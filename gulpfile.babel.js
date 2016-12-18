@@ -96,7 +96,11 @@ const js = () => {
     .pipe(buffer())
     .pipe(plugins.if(!isRelease, plugins.sourcemaps.init({loadMaps: true})))
     .pipe(plugins.header(concatedScripts))
-    .pipe(plugins.if(isRelease, plugins.uglify({preserveComments: 'license'})))
+    .pipe(plugins.if(isRelease, plugins.uglify({
+      mangle: true,
+      compress: true,
+      preserveComments: 'license',
+    })))
     .pipe(plugins.if(!isRelease, plugins.sourcemaps.write('.')))
     .pipe(gulp.dest(path.join(destBaseDir, 'js')))
     .pipe(browserSync.stream())
