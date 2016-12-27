@@ -1,5 +1,8 @@
 {
   "private": true,
+  "projectConfig": {
+    "baseDir": "path/to/project"
+  },
   "scripts": {
     "start": "gulp",
     "precommit": "gulp build --release && git add dist/",

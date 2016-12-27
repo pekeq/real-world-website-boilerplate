@@ -40,7 +40,7 @@ const serve = done => {
 }
 ```
 
-加えて`html`というタスクで利用している、gulp-htmlminの設定の`removeComments`を無効にします。これが有効になっていると、SSIの宣言文を削除してい舞うためです。
+加えて`html`というタスクで利用している、gulp-htmlminの設定の`removeComments`を無効にします。これが有効になっていると、SSIの宣言文を削除してしまうためです。
 
 ```javascript
 .pipe(plugins.if(isRelease, plugins.htmlmin({
@@ -135,16 +135,20 @@ npm i
 
 ### サイトのサブディレクトリの設定
 
-`gulpfile.babel.js`の`BASE_DIR`に、サイトが公開されるサブディレクトリを設定します。
+`package.json`の`projectConfig.baseDir`に、サイトが公開されるサブディレクトリを設定します。
 
-```js
-const BASE_DIR = 'path/to/project'
+```json
+"projectConfig": {
+  "baseDir": "path/to/project"
+},
 ```
 
 ルートなら以下のようにします。
 
-```js
-const BASE_DIR = ''
+```json
+"projectConfig": {
+  "baseDir": ""
+},
 ```
 
 ## Development
@@ -198,9 +202,10 @@ npm start
 │   │   ├── utils.js
 │   │   └── velocity-easings.js
 │   └── static
-└── vendor-assets
+├── vendor-assets
+└── yarn.lock
 
-14 directories, 22 files
+14 directories, 23 files
 ```
 
 ## Recommended CSS design

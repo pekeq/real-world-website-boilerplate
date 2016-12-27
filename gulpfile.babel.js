@@ -3,12 +3,11 @@ const fs = require('fs')
 const browserSync = require('browser-sync').create()
 const gulp = require('gulp')
 const plugins = require('gulp-load-plugins')()
-
-const BASE_DIR = 'path/to/project'
+const {baseDir} = require('./package.json').projectConfig
 
 const isRelease = process.argv.includes('--release')
 const destDir = isRelease ? 'dist' : '.tmp'
-const destBaseDir = path.join(destDir, BASE_DIR)
+const destBaseDir = path.join(destDir, baseDir)
 
 const html = () =>
   gulp.src([
@@ -23,7 +22,7 @@ const html = () =>
       const pagePathFromBaseDir = '/' + path.relative('src/html', file.path)
         .replace(/\.pug$/, '.html')
         .replace(/\/?index\.html$/, '')
-      const buildPagePath = pagePath => path.join('/', BASE_DIR, pagePath)
+      const buildPagePath = pagePath => path.join('/', baseDir, pagePath)
 
       return {
         ...metaData,
@@ -149,11 +148,11 @@ const serve = done => {
         'vendor-assets',
       ],
       routes: isRelease ? {} : {
-        [`${path.join('/', BASE_DIR)}`]: 'src/static',
-        [`${path.join('/', BASE_DIR, 'img')}`]: 'src/img',
+        [`${path.join('/', baseDir)}`]: 'src/static',
+        [`${path.join('/', baseDir, 'img')}`]: 'src/img',
       },
     },
-    startPath: path.join('/', BASE_DIR, '/'),
+    startPath: path.join('/', baseDir, '/'),
     ghostMode: false,
     open: false,
     reloadDebounce: 300,
@@ -193,7 +192,7 @@ export const archive = done => {
   const newCommit = Array.isArray(commit) ? commit[1] : 'HEAD'
   const archiveName = path.resolve('archive', `htdocs.zip`)
   const zip = archiver('zip')
-  const prefix = path.join('dist', BASE_DIR, '/')
+  const prefix = path.join('dist', baseDir, '/')
   const changedFiles = String(git('diff', '--diff-filter=AMCR', '--name-only', oldCommit, newCommit))
     .slice(0, -1)
     .split('\n')
