@@ -56,11 +56,16 @@ const css = () => {
     .pipe(plugins.if(!isRelease, plugins.sourcemaps.init()))
     .pipe(plugins.rename({basename: 'app'}))
     .pipe(plugins.sass().on('error', plugins.sass.logError))
-    .pipe(plugins.autoprefixer({
-      browsers: AUTOPREXIER_BROWSERS,
-      cascade: false,
-    }))
-    .pipe(plugins.if(isRelease, plugins.cssnano()))
+    .pipe(plugins.postcss([
+      require('autoprefixer')({
+        browsers: AUTOPREXIER_BROWSERS,
+        cascade: false,
+      }),
+      ...(isRelease ? [
+        require('css-mqpacker')(),
+        require('csswring')(),
+      ] : [])
+    ]))
     .pipe(plugins.if(!isRelease, plugins.sourcemaps.write('.')))
     .pipe(gulp.dest(path.join(destBaseDir, 'css')))
     .pipe(browserSync.stream({match: '**/*.css'}))

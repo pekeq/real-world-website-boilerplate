@@ -259,6 +259,16 @@ export default () => {
 
 参考：[ページごとにJSの処理を分割するためのよさそうな方法 - ライデンの新人ブログ](https://ryden-inc.github.io/rookies/posts/page-dispatcher.html)
 
+## Recipes
+
+### UMD対応してないスクリプトの読み込み
+
+`gulpfile.babel.js`の`js`というタスクの中の、`ENTRY_FILES`にスクリプトへのパスを追加してください。
+
+### 圧縮に時間のかかる画像のスキップ
+
+`src/static/img`に画像ファイルを配置すると、圧縮されずに単にコピーされます。
+
 ## Deploy to staging
 
 `dist/`及び`vendor_assets/`以下のファイルをサーバーへコピーすることで反映できます。

@@ -1,8 +1,6 @@
-// import './velocity-easings.js'
-import {wait, $, $$} from './utils.js'
+import {delay, $, $$, loadImage} from './utils.js'
 
 const PageDispatcher = require('@yuheiy/page-dispatcher')
-// const Velocity = require('velocity-animate')
 
 const dispatcher = new PageDispatcher()
 
