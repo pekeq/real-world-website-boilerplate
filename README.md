@@ -94,13 +94,13 @@ const serve = done => {
 以下のようなコマンドで、`HEAD`と`<commit>`の差分Zipが`archive/htdocs.zip`として作成されます。
 
 ```bash
-npm run archive -- --commit <commit>
+yarn archive -- --commit <commit>
 ```
 
 `HEAD`以外のコミットとの差分を取りたい場合は以下のようにします。
 
 ```bash
-npm run archive -- --commit <old-commit> --commit <new-commit>
+yarn archive -- --commit <old-commit> --commit <new-commit>
 ```
 
 この方法では不十分な場合は、以下のようなコマンドが参考になります。
@@ -127,12 +127,6 @@ git diff --name-only --diff-filter=AMCR <prev-commit> | grep "^dist/path/to/proj
 yarn
 ```
 
-or
-
-```bash
-npm i
-```
-
 ### サイトのサブディレクトリの設定
 
 `package.json`の`projectConfig.baseDir`に、サイトが公開されるサブディレクトリを設定します。
@@ -154,7 +148,7 @@ npm i
 ## Development
 
 ```
-npm start
+yarn start
 ```
 
 上記のコマンドを実行することで、開発用サーバーが立ち上がり、ファイルの変更が監視されるようになります。
@@ -199,10 +193,10 @@ npm start
 │   ├── img
 │   ├── js
 │   │   ├── index.js
-│   │   ├── utils.js
-│   │   └── velocity-easings.js
+│   │   └── utils.js
 │   └── static
 ├── vendor-assets
+├── webpack.config.js
 └── yarn.lock
 
 14 directories, 23 files
@@ -212,13 +206,13 @@ npm start
 
 [ECSS](http://ecss.io/)が現実的なCSS設計のパターンだと考えており、それを利用することを推奨します。
 
-ファイルの配置としては、`src/css/namespace/Component.scss`という風にします。
+ファイルの配置としては、`src/css/components/namespace/Component.scss`という風にします。
 
 参考：[最近の僕のCSSとの向き合い方 - yuhei blog](http://yuheiy.hatenablog.com/entry/2016/11/18/174037)
 
 ## Recommended JavaScript design
 
-Browserifyでモジュールシステムをシンプルに利用するために、全てのページで一枚のJavaScriptを読み込んで実行するという形にしています。そのため、ページごとに実行するJavaScriptの処理を切り分けるために、このテンプレートでは[PageDispatcher](https://github.com/yuheiy/page-dispatcher)を利用しています。
+Webpackでモジュールシステムをシンプルに利用するために、全てのページで一枚のJavaScriptを読み込んで実行するという形にしています。そのため、ページごとに実行するJavaScriptの処理を切り分けるために、このテンプレートでは[PageDispatcher](https://github.com/yuheiy/page-dispatcher)を利用しています。
 
 `src/js/main.js`には以下のように記述します。
 
@@ -239,7 +233,7 @@ body(data-page-type="home")
 `src/js/main.js`
 
 ```javascript
-// 静的に`require`しないとbrowserifyで依存関係を解決できない
+// 静的に`require`しないとwebpackで依存関係を解決できない
 dispatcher.on('home', require('./pages/home').default)
 dispatcher.on('about', require('./pages/about').default)
 dispatcher.on('products', require('./pages/products').default)
@@ -263,7 +257,7 @@ export default () => {
 
 ### UMD対応してないスクリプトの読み込み
 
-`gulpfile.babel.js`の`js`というタスクの中の、`ENTRY_FILES`にスクリプトへのパスを追加してください。
+`webpack.config.js`の`entry.app`にパッケージ名を追加してください。
 
 ### 圧縮に時間のかかる画像のスキップ
 

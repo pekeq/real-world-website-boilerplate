@@ -3,11 +3,11 @@ const fs = require('fs')
 const browserSync = require('browser-sync').create()
 const gulp = require('gulp')
 const plugins = require('gulp-load-plugins')()
-const {baseDir} = require('./package.json').projectConfig
+const config = require('./package.json').projectConfig
 
 const isRelease = process.argv.includes('--release')
 const destDir = isRelease ? 'dist' : '.tmp'
-const destBaseDir = path.join(destDir, baseDir)
+const destBaseDir = path.join(destDir, config.baseDir)
 
 const html = () =>
   gulp.src([
@@ -22,7 +22,7 @@ const html = () =>
       const pagePathFromBaseDir = '/' + path.relative('src/html', file.path)
         .replace(/\.pug$/, '.html')
         .replace(/\/?index\.html$/, '')
-      const buildPagePath = pagePath => path.join('/', baseDir, pagePath)
+      const buildPagePath = pagePath => path.join('/', config.baseDir, pagePath)
 
       return {
         ...metaData,
@@ -71,59 +71,18 @@ const css = () => {
     .pipe(browserSync.stream({match: '**/*.css'}))
 }
 
-let isWatchifyEnabled = false
+const webpack = require('webpack')
+const webpackConfig = require('./webpack.config.js')
+const compiler = webpack(webpackConfig)
 
-const js = () => {
-  const browserify = require('browserify')
-  const watchify = require('watchify')
-  const source = require('vinyl-source-stream')
-  const buffer = require('vinyl-buffer')
-
-  const ENTRY_FILES = [
-    'node_modules/picturefill/dist/picturefill.js',
-  ]
-  const concatedScripts = ENTRY_FILES.map(file => fs.readFileSync(file, 'utf8'))
-    .concat('')
-    .join('\n')
-
-  const bundler = browserify('src/js/index.js', {
-    ...watchify.args,
-    debug: true,
+const js = done =>
+  compiler.run((err, stats) => {
+    if (err) throw new plugins.util.PluginError('webpack', err)
+    plugins.util.log('[webpack]', stats.toString({
+      colors: true,
+    }))
+    done()
   })
-    .transform('babelify')
-    .plugin('licensify')
-
-  const bundle = () => bundler
-    .bundle()
-    .on('error', err => plugins.util.log('Browserify Error', err))
-    .pipe(source('app.js'))
-    .pipe(buffer())
-    .pipe(plugins.if(!isRelease, plugins.sourcemaps.init({loadMaps: true})))
-    .pipe(plugins.header(concatedScripts))
-    .pipe(plugins.if(isRelease, plugins.uglify({
-      mangle: true,
-      compress: true,
-      preserveComments: 'license',
-    })))
-    .pipe(plugins.if(!isRelease, plugins.sourcemaps.write('.')))
-    .pipe(gulp.dest(path.join(destBaseDir, 'js')))
-    .pipe(browserSync.stream())
-
-  if (isWatchifyEnabled) {
-    const watcher = watchify(bundler)
-    watcher.on('update', bundle)
-    watcher.on('log', plugins.util.log)
-  }
-
-  return bundle()
-}
-
-const enableWatchJs = done => {
-  isWatchifyEnabled = true
-  done()
-}
-
-const watchJs = gulp.series(enableWatchJs, js)
 
 const img = () =>
   gulp.src('src/img/**/*')
@@ -153,11 +112,11 @@ const serve = done => {
         'vendor-assets',
       ],
       routes: isRelease ? {} : {
-        [`${path.join('/', baseDir)}`]: 'src/static',
-        [`${path.join('/', baseDir, 'img')}`]: 'src/img',
+        [`${path.join('/', config.baseDir)}`]: 'src/static',
+        [`${path.join('/', config.baseDir, 'img')}`]: 'src/img',
       },
     },
-    startPath: path.join('/', baseDir, '/'),
+    startPath: path.join('/', config.baseDir, '/'),
     ghostMode: false,
     open: false,
     reloadDebounce: 300,
@@ -167,6 +126,7 @@ const serve = done => {
 const watch = done => {
   gulp.watch('src/html/**/*', html)
   gulp.watch('src/css/**/*.scss', css)
+  gulp.watch('src/js/**/*.js', js)
   gulp.watch('src/img/**/*', img)
   gulp.watch('src/static/**/*', copy)
 
@@ -175,7 +135,7 @@ const watch = done => {
 
 export default gulp.series(
   clean,
-  gulp.parallel(html, css, watchJs, img, copy),
+  gulp.parallel(html, css, js, img, copy),
   serve,
   watch,
 )
@@ -197,7 +157,7 @@ export const archive = done => {
   const newCommit = Array.isArray(commit) ? commit[1] : 'HEAD'
   const archiveName = path.resolve('archive', `htdocs.zip`)
   const zip = archiver('zip')
-  const prefix = path.join('dist', baseDir, '/')
+  const prefix = path.join('dist', config.baseDir, '/')
   const changedFiles = String(git('diff', '--diff-filter=AMCR', '--name-only', oldCommit, newCommit))
     .slice(0, -1)
     .split('\n')
