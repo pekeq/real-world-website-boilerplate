@@ -62,7 +62,6 @@ const css = () => {
         cascade: false,
       }),
       ...(isRelease ? [
-        require('css-mqpacker')(),
         require('csswring')(),
       ] : [])
     ]))
