@@ -1,6 +1,11 @@
 :root {
-  font-family: $font-stack-ui;
+  font-family: $font-stack-system-ui;
   line-height: 1.5;
+}
+
+::before,
+::after {
+  background-repeat: no-repeat;
 }
 
 h1,
@@ -18,9 +23,18 @@ ul {
   list-style: none;
 }
 
+audio,
+canvas,
+iframe,
 img,
+svg,
 video {
   max-width: 100%;
   height: auto;
+  max-height: 100%;
   vertical-align: middle;
+}
+
+svg {
+  fill: currentColor;
 }

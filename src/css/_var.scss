@@ -1,1 +1,7 @@
-$font-stack-ui: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+$breakpoint-handset-landscape-up: 480px;
+$breakpoint-tablet-portrait-up: 600px;
+$breakpoint-tablet-landscape-up: 960px;
+$breakpoint-desktop-up: 1280px;
+
+$font-stack-system-ui: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+$font-stack-sans-serif: "Yu Gothic", YuGothic, "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
