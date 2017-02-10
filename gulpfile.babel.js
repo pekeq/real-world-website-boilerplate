@@ -32,17 +32,6 @@ const html = () =>
       }
     }))
     .pipe(plugins.pug())
-    .pipe(plugins.if(isRelease, plugins.htmlmin({
-      removeComments: true,
-      collapseWhitespace: true,
-      collapseBooleanAttributes: true,
-      removeAttributeQuotes: true,
-      removeRedundantAttributes: true,
-      removeEmptyAttributes: true,
-      removeScriptTypeAttributes: true,
-      removeStyleLinkTypeAttributes: true,
-      removeOptionalTags: true,
-    })))
     .pipe(gulp.dest(destBaseDir))
     .pipe(browserSync.stream())
 

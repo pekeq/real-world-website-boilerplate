@@ -40,25 +40,6 @@ const serve = done => {
 }
 ```
 
-加えて`html`というタスクで利用している、gulp-htmlminの設定の`removeComments`を無効にします。これが有効になっていると、SSIの宣言文を削除してしまうためです。
-
-```javascript
-.pipe(plugins.if(isRelease, plugins.htmlmin({
-
-  // SSIの宣言文を削除してしまうので無効化する
-  // removeComments: true,
-
-  collapseWhitespace: true,
-  collapseBooleanAttributes: true,
-  removeAttributeQuotes: true,
-  removeRedundantAttributes: true,
-  removeEmptyAttributes: true,
-  removeScriptTypeAttributes: true,
-  removeStyleLinkTypeAttributes: true,
-  removeOptionalTags: true,
-})))
-```
-
 ### HTML制作環境
 
 全てのテンプレートファイル（`src/html/**/*.pug`）に、ファイルの配置に対応するページのデータとページのURLを提供します。
