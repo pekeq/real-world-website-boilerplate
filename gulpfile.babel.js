@@ -69,6 +69,8 @@ const js = done =>
     plugins.util.log('[webpack]', stats.toString({
       colors: true,
     }))
+
+    browserSync.reload()
     done()
   })
 
