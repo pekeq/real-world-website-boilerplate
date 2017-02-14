@@ -1,7 +1,3 @@
-@function rem($n) {
-  @return ($n * 1rem);
-}
-
 @function asset($dir, $relative-path) {
   @return url("../#{$dir}/#{$relative-path}");
 }

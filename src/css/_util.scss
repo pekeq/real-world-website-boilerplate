@@ -1,0 +1,47 @@
+.hidden-xs-down {
+  @media (max-width: ($breakpoint-handset-landscape-up - 1)) {
+    display: none;
+  }
+}
+
+.hidden-sm-down {
+  @media (max-width: ($breakpoint-tablet-portrait-up - 1)) {
+    display: none;
+  }
+}
+
+.hidden-md-down {
+  @media (max-width: ($breakpoint-tablet-landscape-up - 1)) {
+    display: none;
+  }
+}
+
+.hidden-lg-down {
+  @media (max-width: ($breakpoint-desktop-up - 1)) {
+    display: none;
+  }
+}
+
+.hidden-xs-up {
+  @media (min-width: $breakpoint-handset-landscape-up) {
+    display: none;
+  }
+}
+
+.hidden-sm-up {
+  @media (min-width: $breakpoint-tablet-portrait-up) {
+    display: none;
+  }
+}
+
+.hidden-md-up {
+  @media (min-width: $breakpoint-tablet-landscape-up) {
+    display: none;
+  }
+}
+
+.hidden-lg-up {
+  @media (min-width: $breakpoint-desktop-up) {
+    display: none;
+  }
+}
