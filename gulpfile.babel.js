@@ -21,7 +21,7 @@ const html = () =>
       const pageData = fs.existsSync(pageDataPath) ? JSON.parse(fs.readFileSync(pageDataPath)) : null
       const pagePathFromBaseDir = '/' + path.relative('src/html', file.path)
         .replace(/\.pug$/, '.html')
-        .replace(/\/?index\.html$/, '')
+        .replace(/\/?index\.html$/, '/')
       const buildPagePath = pagePath => path.join('/', config.baseDir, pagePath)
 
       return {
