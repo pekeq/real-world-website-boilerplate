@@ -19,10 +19,10 @@ const html = () =>
       const metaData = JSON.parse(fs.readFileSync('src/html/metadata.json', 'utf8'))
       const pageDataPath = file.path.replace(/\.pug$/, '.json')
       const pageData = fs.existsSync(pageDataPath) ? JSON.parse(fs.readFileSync(pageDataPath)) : null
-      const pagePathFromBaseDir = '/' + path.relative('src/html', file.path)
+      const pagePathFromBaseDir = ('/' + path.relative('src/html', file.path).replace(new RegExp('\\' + path.sep, 'g'), '/'))
         .replace(/\.pug$/, '.html')
         .replace(/\/?index\.html$/, '/')
-      const buildPagePath = pagePath => path.join('/', config.baseDir, pagePath)
+      const buildPagePath = pagePath => '/' + [config.baseDir, pagePath.replace(/^\//, '')].join('/')
 
       return {
         ...metaData,
@@ -102,11 +102,11 @@ const serve = done => {
         'vendor-assets',
       ],
       routes: isRelease ? {} : {
-        [`${path.join('/', config.baseDir)}`]: 'src/static',
-        [`${path.join('/', config.baseDir, 'img')}`]: 'src/img',
+        [`${'/' + config.baseDir}`]: 'src/static',
+        [`${'/' + [config.baseDir, 'img'].join('/')}`]: 'src/img',
       },
     },
-    startPath: path.join('/', config.baseDir, '/'),
+    startPath: `/${config.baseDir}/`,
     ghostMode: false,
     open: false,
     reloadDebounce: 300,
